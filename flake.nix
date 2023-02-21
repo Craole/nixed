@@ -1,45 +1,87 @@
+# flake.nix
+
 {
-  description = "A devShell example";
+  description = "Nix develop template for Rust";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    rust-overlay.url = "github:oxalica/rust-overlay";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, rust-overlay, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs = { self, nixpkgs, flake-utils }: {
+
+    devShell = flake-utils.lib.eachDefaultSystem (system:
+
       let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
-        };
+        pkgs = nixpkgs.legacyPackages.${system};
+        rustNightly = pkgs.rustChannels.nightly;
+        rustAnalyzer = pkgs.rust-analyzer;
+        vscode = pkgs.vscode;
       in
-      with pkgs;
-      {
-        devShells.default = mkShell {
+
+      with pkgs; {
+        name = "rust-dev-${system}";
+
+        buildInputs = [
+          rustNightly
+          rustAnalyzer
+          vscode
+        ];
+
+        shellHook = ''
+          export RUSTFLAGS="-C target-cpu=native"
+          export CARGO_HOME="${PWD}/.cargo"
+        '';
+
+        nativeBuildInputs = [
+          pkgs.cargo
+        ];
+
+        cargoBuildInputs = [
+          rustNightly
+          rustAnalyzer
+        ];
+
+        cargoInputs = [
+          pkgs.cargo
+        ];
+
+        cargoEnv = {
+          CARGO_HOME = "${PWD}/.cargo";
+        };
+
+        features = {
+          inherit system pkgs rustNightly;
+          default = {
+            project = { name = "my-project"; };
+            toolchain = { channel = "nightly"; };
+            targets = [ "wasm32-unknown-unknown" ];
+            crates = [ "my-crate" ];
+          };
+        };
+
+        defaultPackage = with pkgs; {
+          name = features.project.name;
           buildInputs = [
-            openssl
-            pkg-config
-            exa
-            fd
-            # rust-bin.stable.latest.default
-            rust-bin.nightly."2023-02-05".default
-            # rust-bin.beta.latest.default
-            # rust-bin.selectLatestNightlyWith (toolchain: toolchain.default) # or `toolchain.minimal`
-            # cargo-binstall
-            cargo-generate
-            cargo-watch
-            cargo-deps
-            cargo-limit
-            cargo-update
+            rustNightly
+            rustAnalyzer
+            cargo
           ];
 
-          shellHook = ''
-            alias ls="exa --all --color-scale --icons"
-            alias find=fd
+          phases = [ "buildPhase" ];
+
+          buildPhase = ''
+            export RUSTFLAGS="-C target-cpu=native"
+            export CARGO_HOME="${PWD}/.cargo"
+            cargo init
+            cargo install cargo-edit
+
+            for crate in ${features.crates}; do
+              cargo add $crate
+            done
           '';
         };
       }
     );
+  };
 }
