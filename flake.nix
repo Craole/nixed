@@ -27,7 +27,7 @@
             rust-bin.nightly."2023-02-05".default
             # rust-bin.beta.latest.default
             # rust-bin.selectLatestNightlyWith (toolchain: toolchain.default) # or `toolchain.minimal`
-            cargo-binstall
+            # cargo-binstall
             cargo-generate
             cargo-watch
             cargo-deps
