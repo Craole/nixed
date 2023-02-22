@@ -7,6 +7,7 @@ A portable template for setting up a Rust development environment using nix, tha
 ## Table of Contents
 
 - [Description](#description)
+- [Purpose](#purpose)
 - [Features](#features)
   - [Primary](#primary)
   - [Optional](#optional)
@@ -15,6 +16,10 @@ A portable template for setting up a Rust development environment using nix, tha
 - [Examples](#examples)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Purpose
+
+Why
 
 ## Features
 
@@ -92,13 +97,13 @@ nix develop
 
 |Path|Description|
 |---|---|
-|[./config](https://github.com/Craole/nixed_rust/tree/master/config)| Contains subdirectories for overlays, options, and derivations.|
-|[./config/overlays](https://github.com/Craole/nixed_rust/tree/master/config/overlays)| Import options and overlays to set up a Rust development environment.
-|[./config/options](https://github.com/Craole/nixed_rust/tree/master/config/options)| Specify options and information such as dependencies, IDE, project information, targets, and toolchains.
-|[./config/derivations](https://github.com/Craole/nixed_rust/tree/master/config/derivations)| Nix derivations for Cargo, rustc, rustfmt, rls, rust-analyzer, and any other modular derivations.
-|[./src](https://github.com/Craole/nixed_rust/tree/master/src)| Project directory.
-|[./cargo.toml](https://github.com/Craole/nixed_rust/tree/master/cargo.toml)| Cargo.
-|[./flake.nix](https://github.com/Craole/nixed_rust/tree/master/flake.nix)| Flake.
+|[./config][cfg]| Contains subdirectories for overlays, options, and derivations.|
+|[./config/overlays][cfg.overlays]| Import options and overlays to set up a Rust development environment.
+|[./config/options][cfg.options]| Specify options and information such as dependencies, IDE, project information, targets, and toolchains.
+|[./config/derivations][cfg.derivations]| Nix derivations for Cargo, rustc, rustfmt, rls, rust-analyzer, and any other modular derivations.
+|[./src][src]| Project directory.
+|[./cargo.toml][toml]| Cargo.
+|[./flake.nix][flake]| Entry point for the project and it will define the build inputs and outputs, using the flake-utils library..
 
 ## Examples
 
@@ -110,7 +115,15 @@ See [CONTRIBUTING.md][contributing].
 
 ## License
 
-See [LICENSE.md](LICENSE.md).
+See [LICENSE.md][license].
 
 [examples]: examples
 [contributing]: CONTRIBUTING.md
+[license]: LICENSE.md
+[cfg]: config
+[cfg.overlays]: config/overlays
+[cfg.options]: config/options
+[cfg.derivations]: config/derivations
+[src]: src
+[toml]: cargo.toml
+[flake]: flake.nix

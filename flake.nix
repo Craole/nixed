@@ -1,46 +1,25 @@
 {
-  description = "Rust Development Environment";
+  description = "My Rust project";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, rust-overlay, flake-utils }:
     let
-      utils = import flake-utils {
-        inherit inputs;
+      # Import the various modules
+      options = import ./config/options.nix { inherit (self) inputs; };
+      gitignore = import ./config/ignore.nix { inherit (options); };
+      devShell = import ./config/devShell.nix { inherit (options nixpkgs rust-overlay); };
+      vscode = import ./config/vscode.nix { inherit (options nixpkgs rust-overlay); };
+
+      # Define the output types
+      outputs = {
+        defaultPackage = devShell;
+        vscode = if options.ide == "vscode" then vscode else null;
+        gitignore = gitignore;
       };
-
-      overlays = [ import ./config/overlays/rust-dev-env.nix ];
-
-    in
-      utils.lib.eachDefaultSystem (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-          };
-          config = import ./config/options {};
-          rustEnv = pkgs.mkShell {
-            buildInputs = [
-              pkgs.rust
-              pkgs.cargo
-              pkgs.rls
-              pkgs.rustfmt
-              pkgs.rust-analyzer
-              # add other build inputs here
-            ];
-            # set environment variables here
-          };
-        in {
-          devEnv = {
-            buildInputs = [
-              rustEnv
-              pkgs.cacert
-              # add other devEnv inputs here
-            ];
-            path = [ "devEnv" ];
-          };
-        }
-      );
+    in outputs;
 }

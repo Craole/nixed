@@ -1,28 +1,70 @@
-NixDev - Rust
+nixed_rust
 
-Create a modular nix flake to establish a rust development environment.
+create a portable template for setting up a Rust development environment using nix flakes generated solely from a config.toml
 
-Features:
-- Allow user to set/enable optional features
-- Use flake-utils to maintain portability
-- Take a modular approach to reduce the code length. (eg. write logic,derivations and options in seperate files)
-- Deploy using one command to run nix flake init and nix develop
-- Store options and information in separate config file (eg. IDE, project info, crates and features, targets, toolchain)
-- Initialize rust project in a subfolder with the project name
-- Integrate with cargo.toml
+```Example config.toml
+[project]
+name = "myproject"
+description = "A new Rust project"
+authors = ["Your Name <you@example.com>"]
+version = "0.1.0"
+edition = "2021"
+
+[options]
+ide = "vscode" # {vscode, helix, neovim, emacs}
+toolchain = "nightly" # {stable, nightly, beta}
+target = "wasm32-unknown-unknown"
+
+[[options.dependencies]]
+crate = "serde"
+features = ["derive"]
+
+[[options.dependencies]]
+crate = "reqwest"
+version = "0.11.3"
+features = ["json"]
+
+[ignore]
+file = "./gitignore"
+
+# List of directories to ignore
+[[ignore.directories]]
+ignored_dirs = ["node_modules", "vendor"]
+
+[[ignore.files]]
+# List of files to ignore
+ignored_files = ["*.log", "*.tmp", "*.bak"]
+```
+
+- Use flake-utils and/or oxalica/rust-overlay to maintain portability.
+- Use a modular project structure outlined to reduce the code length and improve readability.
+- Store all options and information in config .toml file (eg. IDE, project info, crates and features, targets, toolchain)
+- use nix develop to initialize rust project
+- Set up an IDE for editing and formatting .rs, .nix, .toml, .sh and .json files.
+- Generate .gitignore from config.toml
 
 Optional Features:
-- Set up an IDE with editing and formatting tools for rust, nix and json files. (eg. vscode, helix, neovim, emacs)
-- Allow user to set project information for the cargo.toml (eg. name, version, authors)
-- Allow user to set dependencies with optional features flags in cargo.toml (eg. cargo add serde --feature derive)
-- Allow user to set targets. (eg. wasm)
-- Allow user to set toolchain (eg. nightly, beta)
+- Set up an IDE for editing and formatting .rs, .nix, .toml, .sh and .json files. [Options: vscode, helix, neovim, emacs]
+- Allow user to set package information. Include all options available to Cargo The Manifest Format including name, description, authors, version and edition
+- Allow user to set dependencies with optional features flags
+- Allow user to set the target.
+- Allow user to set toolchain
+
+Defaults:
+IDE = vscode
+TOOLCHAIN = nightly
+TARGET = wasm32-unknown-unknown
 
 Project Structure:
 .
 ├── config
 │ ├── overlays
-│ │ └── rust-dev-env.nix
+│ │ └── rust.nix
+│ │ └── vscode.nix
+│ │ └── emacs.nix
+│ │ └── neovim.nix
+│ │ └── helix.nix
+│ │ ├── <other nix overlays>
 │ ├── options
 │ │ ├── dependencies.nix
 │ │ ├── ide.nix
@@ -31,24 +73,48 @@ Project Structure:
 │ │ ├── targets.nix
 │ │ └── toolchain.nix
 │ ├── derivations
-│ │ ├── cargo.nix
-│ │ ├── nixfmt.nix
-│ │ ├── rust.nix
-│ │ ├── rustfmt.nix
-│ │ ├── rls.nix
-│ │ ├── rust-analyzer.nix
-│ │ └── <other modular derivations>
-├── src
-│ └── modules
-│ │ ├── mod1
-│ │ │ ├── mod.rs
-│ │ ├── <other mods>
-│ │ └── mod.rs
-│ └── libraries
-│ │ ├── lib1
-│ │ │ ├── mod.rs
-│ │ ├── <other mods>
-│ │ └── mod.rs
+│ │ ├── <nix derivations>
 ├── flake.nix
+├── default.nix
+├── shell.nix
 ├── cargo.toml
-├── README.md
+├── config.toml
+
+create a rust development template using a nix flakes solely generated from a config.toml? break code into separate config modules don't hardcode anything, ensure reproducibility, readability and portability. use oxalica/rust-overlay if toolchain is not stable. Include any necessary tools for formating or cargo management
+
+```cargo.toml
+[project]
+name = "myproject"
+description = "A new Rust project"
+authors = ["Your Name <you@example.com>"]
+version = "0.1.0"
+edition = "2021"
+
+[options]
+ide = "vscode"
+toolchain = "nightly"
+target = "wasm32-unknown-unknown"
+
+[[options.dependencies]]
+crate = "serde"
+features = ["derive"]
+
+[[options.dependencies]]
+crate = "reqwest"
+version = "0.11.3"
+features = ["json"]
+```
+
+Implementation:
+The template will use Nix and flake-utils to maintain portability and modularity. It will have a modular project structure to make it more readable and easier to maintain. The core of the project will be a flake.nix file that pulls in all the necessary dependencies and options, and generates a derivation that sets up the Rust development environment.
+
+The config folder will have overlays for different IDEs (vscode, emacs, neovim, helix) and for the Rust toolchain, as well as options for project information, dependencies, targets, and a gitignore file. The options folder will contain nix files for each of these options, and the config.toml file will store all the user-selected options.
+
+The script will use the information in the config.toml file to generate a Cargo.toml file that reflects the user-selected options. It will also create a relevant .gitignore file and allow the user to add additional entries via the config.toml file.
+
+The user will be able to select the IDE, toolchain, target, and dependencies with optional features flags. They will also be able to set the package information (name, description, authors, version, and edition). By default, the template will use vscode as the IDE, nightly as the toolchain, and wasm32-unknown-unknown as the target.
+
+Conclusion:
+With this portable template for setting up a Rust development environment using nix, users will be able to easily set up their development environment with their preferred options. The template is modular, portable, and uses flake-utils to maintain portability. It also uses a .toml file to store all the user-selected options, which allows for easy synchronization between the config file and the Cargo.toml file.
+
+and update the cargo.toml accordingly. Allow syncronization between cargo.toml and config.toml

@@ -1,0 +1,43 @@
+[project]
+name = "myproject"
+description = "A new Rust project"
+authors = ["Your Name <you@example.com>"]
+version = "0.1.0"
+edition = "2021"
+
+[options]
+toolchain = "nightly" # {stable, nightly, beta}
+target = "wasm32-unknown-unknown"
+
+[[ide.vscode]]
+enable = true
+extensions= []
+settings=[ ]
+
+[[ide.helix]]
+enable = true
+extensions= []
+settings=[ ]
+
+[[ide.neovim]]
+enable = false
+extensions= []
+settings=[ ]
+
+[[ide.emacs]]
+enable = false
+extensions= []
+settings=[ ]
+
+[[crates.serde]]
+version = "latest"
+features = ["derive"]
+
+[[crates.reqwest]]
+version = "0.11.3"
+features = ["json"]
+
+[ignore]
+path = "./gitignore"
+directories = ["node_modules", "vendor"]
+files = ["*.log", "*.tmp", "*.bak"]
