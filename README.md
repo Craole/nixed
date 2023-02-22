@@ -102,7 +102,7 @@ nix develop
 
 ## Examples
 
-See [EXAMPLES.md](EXAMPLES.md).
+See [EXAMPLES.md][def].
 
 ## Contributing
 
@@ -111,3 +111,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 See [LICENSE.md](LICENSE.md).
+
+
+[def]: EXAMPLES.md
