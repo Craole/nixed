@@ -102,12 +102,12 @@ nix develop
 
 ## Examples
 
-See [EXAMPLES.md](CONTRIBUTING.md).
+See [EXAMPLES.md](EXAMPLES.md).
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/Craole/nixed_rust/blob/master/CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-See [LICENSE.md](https://github.com/Craole/nixed_rust/blob/master/LICENSE.md).
+See [LICENSE.md](LICENSE.md).
