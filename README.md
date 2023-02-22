@@ -16,6 +16,8 @@ A modular Nix flake for setting up a Rust development environment. It allows use
 
 ## Features
 
+### Primary
+
 - Allow users to set/enable optional features.
 - Use flake-utils to maintain portability.
 - Take a modular approach to reduce code length.
@@ -24,7 +26,7 @@ A modular Nix flake for setting up a Rust development environment. It allows use
 - Initialize rust project in a subfolder with the project name.
 - Integrate with cargo.toml.
 
-## Options
+### Optionional
 
 - Set up an IDE with editing and formatting tools for rust, nix, and json files (e.g., vscode, helix, neovim, emacs).
 - Allow users to set project information for the cargo.toml (e.g., name, version, authors).
@@ -86,21 +88,20 @@ nix develop
 └── flake.nix
 ```
 
-## Configuration
+### [config]()
 
-The config directory contains subdirectories for overlays, options, and derivations. The overlays directory contains a rust-dev-env.nix file that imports options and overlays to set up a Rust development environment.
+The config directory contains subdirectories for overlays, options, and derivations.
+
+### config/overlays
+
+The overlays directory contains a rust-dev-env.nix file that imports options and overlays to set up a Rust development environment.
+
+### Options
 
 The options directory contains files for specifying options and information such as dependencies, IDEs, project information, targets, and toolchains.
 
+### Derivations
 The derivations directory contains Nix derivations for Cargo, rustc, rustfmt, rls, rust-analyzer, and any other modular derivations.
-Usage
-
-To set up the environment, run:
-
-```sh
-nix flake init
-nix develop
-```
 
 This will create a new directory for the Rust project, set up the dependencies, and initialize the project in a subfolder with the project name.
 
@@ -113,8 +114,8 @@ NixDev Rust is a modular and customizable
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/Craole/nixed_rust.githttps://github.com/pivotal/LicenseFinder/blob/master/CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/Craole/nixed_rust/blob/master/CONTRIBUTING.md).
 
 ## License
 
-See LICENSE.md
+See [LICENSE.md](https://github.com/Craole/nixed_rust/blob/master/LICENSE.md).
