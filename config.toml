@@ -1,3 +1,5 @@
+#> config.toml
+
 [project]
 name = "myproject"
 description = "A new Rust project"
@@ -6,28 +8,30 @@ version = "0.1.0"
 edition = "2021"
 
 [options]
-toolchain = "nightly" # {stable, nightly, beta}
-target = "wasm32-unknown-unknown"
+toolchain = "nightly"               # {stable, nightly, beta}
+target = ["wasm32-unknown-unknown"]
 
 [[ide.vscode]]
 enable = true
-extensions= []
-settings=[ ]
+languages = ["nix", "rust", "toml", "shellscript", "json"]
+extensions = ["even-better-toml", "rust-analyzer", "nixfmt","rome"]
+settings = []
 
 [[ide.helix]]
 enable = true
-extensions= []
-settings=[ ]
+languages = ["nix", "rust", "toml", "shellscript"]
+extensions = []
+settings = []
 
 [[ide.neovim]]
 enable = false
-extensions= []
-settings=[ ]
+extensions = []
+settings = []
 
 [[ide.emacs]]
 enable = false
-extensions= []
-settings=[ ]
+extensions = []
+settings = []
 
 [[crates.serde]]
 version = "latest"
@@ -37,7 +41,10 @@ features = ["derive"]
 version = "0.11.3"
 features = ["json"]
 
+[[crates.leptos]]
+version = ""
+
 [ignore]
 path = "./gitignore"
-directories = ["node_modules", "vendor"]
+directories = ["debug", "target", "tmp"]
 files = ["*.log", "*.tmp", "*.bak"]

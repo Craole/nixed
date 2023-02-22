@@ -1,64 +1,15 @@
 nixed_rust
 
-create a portable template for setting up a Rust development environment using nix flakes generated solely from a config.toml
-
-```Example config.toml
-[project]
-name = "myproject"
-description = "A new Rust project"
-authors = ["Your Name <you@example.com>"]
-version = "0.1.0"
-edition = "2021"
-
-[options]
-ide = "vscode" # {vscode, helix, neovim, emacs}
-toolchain = "nightly" # {stable, nightly, beta}
-target = "wasm32-unknown-unknown"
-
-[[options.dependencies]]
-crate = "serde"
-features = ["derive"]
-
-[[options.dependencies]]
-crate = "reqwest"
-version = "0.11.3"
-features = ["json"]
-
-[ignore]
-file = "./gitignore"
-
-# List of directories to ignore
-[[ignore.directories]]
-ignored_dirs = ["node_modules", "vendor"]
-
-[[ignore.files]]
-# List of files to ignore
-ignored_files = ["*.log", "*.tmp", "*.bak"]
-```
-
-- Use flake-utils and/or oxalica/rust-overlay to maintain portability.
+- create a portable template for setting up a Rust development environment using nix flakes
 - Use a modular project structure outlined to reduce the code length and improve readability.
-- Store all options and information in config .toml file (eg. IDE, project info, crates and features, targets, toolchain)
-- use nix develop to initialize rust project
-- Set up an IDE for editing and formatting .rs, .nix, .toml, .sh and .json files.
-- Generate .gitignore from config.toml
-
-Optional Features:
-- Set up an IDE for editing and formatting .rs, .nix, .toml, .sh and .json files. [Options: vscode, helix, neovim, emacs]
-- Allow user to set package information. Include all options available to Cargo The Manifest Format including name, description, authors, version and edition
-- Allow user to set dependencies with optional features flags
-- Allow user to set the target.
-- Allow user to set toolchain
-
-Defaults:
-IDE = vscode
-TOOLCHAIN = nightly
-TARGET = wasm32-unknown-unknown
+- use nix develop to inialize solely based on config.toml
+- don't hardcode anything. work with variables in config.toml
+- Use flake-utils and/or oxalica/rust-overlay to maintain portability.
 
 Project Structure:
 .
 ├── config
-│ ├── overlays
+│ ├── ide
 │ │ └── rust.nix
 │ │ └── vscode.nix
 │ │ └── emacs.nix
