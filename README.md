@@ -112,5 +112,5 @@ See [CONTRIBUTING.md][contributing].
 
 See [LICENSE.md](LICENSE.md).
 
-[examples]: EXAMPLES.md
+[examples]: examples
 [contributing]: CONTRIBUTING.md
