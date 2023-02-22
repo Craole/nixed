@@ -102,7 +102,7 @@ nix develop
 
 ## Examples
 
-See [EXAMPLES.md](blob/master/CONTRIBUTING.md).
+See [EXAMPLES.md](CONTRIBUTING.md).
 
 ## Contributing
 
