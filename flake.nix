@@ -1,87 +1,46 @@
-# flake.nix
-
 {
-  description = "Nix develop template for Rust";
+  description = "Rust Development Environment";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }: {
+  outputs = { self, nixpkgs, flake-utils }:
+    let
+      utils = import flake-utils {
+        inherit inputs;
+      };
 
-    devShell = flake-utils.lib.eachDefaultSystem (system:
+      overlays = [ import ./config/overlays/rust-dev-env.nix ];
 
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-        rustNightly = pkgs.rustChannels.nightly;
-        rustAnalyzer = pkgs.rust-analyzer;
-        vscode = pkgs.vscode;
-      in
-
-      with pkgs; {
-        name = "rust-dev-${system}";
-
-        buildInputs = [
-          rustNightly
-          rustAnalyzer
-          vscode
-        ];
-
-        shellHook = ''
-          export RUSTFLAGS="-C target-cpu=native"
-          export CARGO_HOME="${PWD}/.cargo"
-        '';
-
-        nativeBuildInputs = [
-          pkgs.cargo
-        ];
-
-        cargoBuildInputs = [
-          rustNightly
-          rustAnalyzer
-        ];
-
-        cargoInputs = [
-          pkgs.cargo
-        ];
-
-        cargoEnv = {
-          CARGO_HOME = "${PWD}/.cargo";
-        };
-
-        features = {
-          inherit system pkgs rustNightly;
-          default = {
-            project = { name = "my-project"; };
-            toolchain = { channel = "nightly"; };
-            targets = [ "wasm32-unknown-unknown" ];
-            crates = [ "my-crate" ];
+    in
+      utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
           };
-        };
-
-        defaultPackage = with pkgs; {
-          name = features.project.name;
-          buildInputs = [
-            rustNightly
-            rustAnalyzer
-            cargo
-          ];
-
-          phases = [ "buildPhase" ];
-
-          buildPhase = ''
-            export RUSTFLAGS="-C target-cpu=native"
-            export CARGO_HOME="${PWD}/.cargo"
-            cargo init
-            cargo install cargo-edit
-
-            for crate in ${features.crates}; do
-              cargo add $crate
-            done
-          '';
-        };
-      }
-    );
-  };
+          config = import ./config/options {};
+          rustEnv = pkgs.mkShell {
+            buildInputs = [
+              pkgs.rust
+              pkgs.cargo
+              pkgs.rls
+              pkgs.rustfmt
+              pkgs.rust-analyzer
+              # add other build inputs here
+            ];
+            # set environment variables here
+          };
+        in {
+          devEnv = {
+            buildInputs = [
+              rustEnv
+              pkgs.cacert
+              # add other devEnv inputs here
+            ];
+            path = [ "devEnv" ];
+          };
+        }
+      );
 }
