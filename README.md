@@ -2,15 +2,17 @@
 
 ## Description
 
-A modular Nix flake for setting up a Rust development environment. It allows users to set optional features, dependencies, IDEs, targets, and toolchains. The project takes a modular approach to reduce code length and maintain portability.
+A portable template for setting up a Rust development environment using nix, that allows users to set optional features, dependencies, IDEs, targets, and toolchains.
 
 ## Table of Contents
 
 - [Description](#description)
 - [Features](#features)
+  - [Primary](#primary)
+  - [Optional](#optional)
 - [Dependencies](#dependencies)
-- [Options](#options)
 - [Usage](#usage)
+- [Examples](#examples)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -26,7 +28,7 @@ A modular Nix flake for setting up a Rust development environment. It allows use
 - Initialize rust project in a subfolder with the project name.
 - Integrate with cargo.toml.
 
-### Optionional
+### Optional
 
 - Set up an IDE with editing and formatting tools for rust, nix, and json files (e.g., vscode, helix, neovim, emacs).
 - Allow users to set project information for the cargo.toml (e.g., name, version, authors).
@@ -88,29 +90,19 @@ nix develop
 └── flake.nix
 ```
 
-### [config]()
+|Path|Description|
+|---|---|
+|[./config](https://github.com/Craole/nixed_rust/tree/master/config)| Contains subdirectories for overlays, options, and derivations.|
+|[./config/overlays](https://github.com/Craole/nixed_rust/tree/master/config/overlays)| Import options and overlays to set up a Rust development environment.
+|[./config/options](https://github.com/Craole/nixed_rust/tree/master/config/options)| Specify options and information such as dependencies, IDE, project information, targets, and toolchains.
+|[./config/derivations](https://github.com/Craole/nixed_rust/tree/master/config/derivations)| Nix derivations for Cargo, rustc, rustfmt, rls, rust-analyzer, and any other modular derivations.
+|[./src](https://github.com/Craole/nixed_rust/tree/master/src)| Project directory.
+|[./cargo.toml](https://github.com/Craole/nixed_rust/tree/master/cargo.toml)| Cargo.
+|[./flake.nix](https://github.com/Craole/nixed_rust/tree/master/flake.nix)| Flake.
 
-The config directory contains subdirectories for overlays, options, and derivations.
+## Examples
 
-### config/overlays
-
-The overlays directory contains a rust-dev-env.nix file that imports options and overlays to set up a Rust development environment.
-
-### Options
-
-The options directory contains files for specifying options and information such as dependencies, IDEs, project information, targets, and toolchains.
-
-### Derivations
-The derivations directory contains Nix derivations for Cargo, rustc, rustfmt, rls, rust-analyzer, and any other modular derivations.
-
-This will create a new directory for the Rust project, set up the dependencies, and initialize the project in a subfolder with the project name.
-
-To customize the options, edit the files in the config/options directory. This allows users to set project information, dependencies, targets, and toolchains.
-
-To add an IDE, edit the config/options/ide.nix file to include the desired IDE.
-Conclusion
-
-NixDev Rust is a modular and customizable
+See [EXAMPLES.md](blob/master/CONTRIBUTING.md).
 
 ## Contributing
 
