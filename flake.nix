@@ -1,16 +1,22 @@
+#DOC=================================================================<#
+#@ Project Structure
+#|   .
+#|   ├── configuration
+#|   │   └── default.nix
+#|   └── flake.nix
+
+#@ Project File
+#| flake.nix
+#>=================================================================<#
+
 {
-  description = "My Nix flake";
+  description = "Dev Environment Flake";
+  inputs = { };
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-  };
-
-  outputs = { self, nixpkgs }:
-    let
-      configuration = import ./configuration;
-    in
-    {
-      # Use your module here
-      outputs = { self, nixpkgs, configuration }: { };
+  outputs = { self, nixpkgs }: {
+    utils = nixpkgs.flake-utils;
+    configuration = utils.lib.importDir ./configuration {
+      inherit utils;
     };
+  };
 }
