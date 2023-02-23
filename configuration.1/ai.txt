@@ -1,0 +1,71 @@
+nixed_rust
+
+- create a portable template for setting up a Rust development environment using nix flakes.
+- Use a modular project structure outlined to reduce the code length and improve readability.
+- use nix develop to inialize solely based on config.toml
+- don't hardcode anything. work with variables in config.toml
+- Use flake-utils and/or oxalica/rust-overlay to maintain portability.
+
+Project Structure:
+.
+├── config
+│ ├── ide
+│ │ └── rust.nix
+│ │ └── vscode.nix
+│ │ └── emacs.nix
+│ │ └── neovim.nix
+│ │ └── helix.nix
+│ │ ├── <other nix overlays>
+│ ├── options
+│ │ ├── dependencies.nix
+│ │ ├── ide.nix
+│ │ ├── gitignore.nix
+│ │ ├── project.nix
+│ │ ├── targets.nix
+│ │ └── toolchain.nix
+│ ├── derivations
+│ │ ├── <nix derivations>
+├── flake.nix
+├── default.nix
+├── shell.nix
+├── cargo.toml
+├── config.toml
+
+create a rust development template using a nix flakes solely generated from a config.toml? break code into separate config modules don't hardcode anything, ensure reproducibility, readability and portability. use oxalica/rust-overlay if toolchain is not stable. Include any necessary tools for formating or cargo management
+
+```cargo.toml
+[project]
+name = "myproject"
+description = "A new Rust project"
+authors = ["Your Name <you@example.com>"]
+version = "0.1.0"
+edition = "2021"
+
+[options]
+ide = "vscode"
+toolchain = "nightly"
+target = "wasm32-unknown-unknown"
+
+[[options.dependencies]]
+crate = "serde"
+features = ["derive"]
+
+[[options.dependencies]]
+crate = "reqwest"
+version = "0.11.3"
+features = ["json"]
+```
+
+Implementation:
+The template will use Nix and flake-utils to maintain portability and modularity. It will have a modular project structure to make it more readable and easier to maintain. The core of the project will be a flake.nix file that pulls in all the necessary dependencies and options, and generates a derivation that sets up the Rust development environment.
+
+The config folder will have overlays for different IDEs (vscode, emacs, neovim, helix) and for the Rust toolchain, as well as options for project information, dependencies, targets, and a gitignore file. The options folder will contain nix files for each of these options, and the config.toml file will store all the user-selected options.
+
+The script will use the information in the config.toml file to generate a Cargo.toml file that reflects the user-selected options. It will also create a relevant .gitignore file and allow the user to add additional entries via the config.toml file.
+
+The user will be able to select the IDE, toolchain, target, and dependencies with optional features flags. They will also be able to set the package information (name, description, authors, version, and edition). By default, the template will use vscode as the IDE, nightly as the toolchain, and wasm32-unknown-unknown as the target.
+
+Conclusion:
+With this portable template for setting up a Rust development environment using nix, users will be able to easily set up their development environment with their preferred options. The template is modular, portable, and uses flake-utils to maintain portability. It also uses a .toml file to store all the user-selected options, which allows for easy synchronization between the config file and the Cargo.toml file.
+
+and update the cargo.toml accordingly. Allow syncronization between cargo.toml and config.toml

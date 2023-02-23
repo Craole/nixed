@@ -1,14 +1,16 @@
 {
-  description = "My simple flake";
+  description = "My Nix flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
 
-  outputs = { self, nixpkgs }: {
-    defaultPackage = self.overlay {
-      # Import the default.nix file from the configuration directory
-      configuration = import ./configuration { inherit (nixpkgs) pkgs; };
+  outputs = { self, nixpkgs }:
+    let
+      configuration = import ./configuration;
+    in
+    {
+      # Use your module here
+      outputs = { self, nixpkgs, configuration }: { };
     };
-  };
 }
