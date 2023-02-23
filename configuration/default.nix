@@ -7,20 +7,27 @@
 #|   the 'dev-environment-flake'.
 #>=================================================================<#
 
-# { pkgs }:
+#DOC==========================================<#
+#@ File Name: default.nix
+#>============================================<#
 
-# let
-#   inherit (pkgs) stdenv;
-# in
+{ pkgs }:
 
-# stdenv.mkDerivation {
-#   name = "hello";
-#   src = pkgs.fetchurl {
-#     url = "http://ftp.gnu.org/gnu/hello/hello-2.10.tar.gz";
-#     sha256 = "1m4d09wx20c0krmxzp07jy1xq9q3q2ai2smj1aw7s6ajb96d72cr";
-#   };
-#   buildInputs = [ pkgs.gnumake ];
-#   installPhase = ''
-#     make install prefix=$out
-#   '';
-# }
+with pkgs;
+
+let
+  myPackage = stdenv.mkDerivation {
+    name = "my-package";
+    src = null;
+    buildInputs = [ cowsay ];
+    phases = [ "installPhase" ];
+    installPhase = ''
+      mkdir -p $out/bin
+      echo "Hello, World!" | cowsay > $out/bin/hello
+      chmod +x $out/bin/hello
+    '';
+  };
+in
+{
+  default = myPackage;
+}
