@@ -16,10 +16,14 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }: {
-    utils = builtins.getFlake flake-utils;
-    configuration = utils.lib.importDir ./configuration {
-      inherit utils;
+  outputs = { self, nixpkgs, flake-utils }:
+    let
+      utils = flake-utils.lib;
+    in
+    {
+      utils = utils;
+      configuration = utils.importDir ./configuration {
+        inherit utils;
+      };
     };
-  };
 }
