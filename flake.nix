@@ -17,8 +17,8 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }: {
-    utils = flake-utils.lib;
-    configuration = utils.importDir ./configuration {
+    utils = builtins.getFlake flake-utils;
+    configuration = utils.lib.importDir ./configuration {
       inherit utils;
     };
   };
