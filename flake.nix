@@ -11,12 +11,15 @@
 
 {
   description = "Dev Environment Flake";
-  inputs = { };
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
 
-  outputs = { self, nixpkgs }: {
-    utils = nixpkgs.flake-utils;
-    configuration = utils.lib.importDir ./configuration {
-      inherit utils;
+  outputs = { self, nixpkgs, flake-utils }: {
+    configuration = flake-utils.lib.importDir ./configuration {
+      inherit (flake-utils) lib;
+      inherit (nixpkgs) pkgs;
     };
   };
 }
