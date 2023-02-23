@@ -8,19 +8,11 @@
     "timonwong.shellcheck",
     "evgeniypeshkov.syntax-highlighter",
     "xshrim.txt-syntax",
-    "davidanson.vscode-markdownlint",
     "psudo-dev.nebula-oni-theme",
     "antfu.icons-carbon",
     "miguelsolorio.fluent-icons",
     "rome.rome",
-    "dustypomerleau.rust-syntax",
     "tamasfe.even-better-toml",
-    "jscearcy.rust-doc-viewer",
-    "panicbit.cargo",
-    "swellaby.vscode-rust-test-adapter",
-    "vadimcn.vscode-lldb",
-    "serayuzgur.crates",
-    "rust-lang.rust-analyzer",
     "cardinal90.multi-cursor-case-preserve"
   ]
 }

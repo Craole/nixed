@@ -1,6 +1,6 @@
 nixed_rust
 
-- create a portable template for setting up a Rust development environment using nix flakes
+- create a portable template for setting up a Rust development environment using nix flakes.
 - Use a modular project structure outlined to reduce the code length and improve readability.
 - use nix develop to inialize solely based on config.toml
 - don't hardcode anything. work with variables in config.toml
