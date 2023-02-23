@@ -13,10 +13,11 @@
 {
   description = "Development Environment";
   inputs = {
-    official-templates.url = github:NixOS/templates;
+    templates_NixOS.url = github:NixOS/templates;
+    templates_nix-way.url = "github:the-nix-way/dev-templates";
   };
 
-  outputs = { self, official-templates, ... }: {
+  outputs = { self, templates_NixOS, templates_nix-way, ... }: {
     templates = {
       rust-fenix = {
         path = ./templates/rust_fenix;
@@ -27,6 +28,7 @@
         description = "Simple Hello World in Rust";
       };
     }
-    // official-templates.templates;
+    // templates_NixOS.templates
+    // templates_nix-way.templates;
   };
 }
