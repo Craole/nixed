@@ -7,20 +7,20 @@
 #|   the 'dev-environment-flake'.
 #>=================================================================<#
 
-{ pkgs }:
+# { pkgs }:
 
-let
-  inherit (pkgs) stdenv;
-in
+# let
+#   inherit (pkgs) stdenv;
+# in
 
-stdenv.mkDerivation {
-  name = "hello";
-  src = pkgs.fetchurl {
-    url = "http://ftp.gnu.org/gnu/hello/hello-2.10.tar.gz";
-    sha256 = "1m4d09wx20c0krmxzp07jy1xq9q3q2ai2smj1aw7s6ajb96d72cr";
-  };
-  buildInputs = [ pkgs.gnumake ];
-  installPhase = ''
-    make install prefix=$out
-  '';
-}
+# stdenv.mkDerivation {
+#   name = "hello";
+#   src = pkgs.fetchurl {
+#     url = "http://ftp.gnu.org/gnu/hello/hello-2.10.tar.gz";
+#     sha256 = "1m4d09wx20c0krmxzp07jy1xq9q3q2ai2smj1aw7s6ajb96d72cr";
+#   };
+#   buildInputs = [ pkgs.gnumake ];
+#   installPhase = ''
+#     make install prefix=$out
+#   '';
+# }
