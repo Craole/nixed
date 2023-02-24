@@ -22,11 +22,11 @@
     templates = {
       rust-fenix = {
         path = ./templates/rust_fenix;
-        description = "Rust Development Environment [Nightly], using fenix";
+        description = "Rust Development Environment [Nightly]";
       };
       rust-leptos = {
         path = ./templates/rust_leptos;
-        description = "Rust Development Environment [Nightly], using fenix";
+        description = "Rust Web Development Environment [Nightly, Leptos], using fenix";
       };
       rust-workspaces = {
         path = ./templates/rust_workspaces;
@@ -35,7 +35,7 @@
       rust-hello = {
         path = ./templates/rust_hello;
         description = "Simple Hello World in Rust";
-      };
+       };
     }
     // templates_NixOS.templates
     // templates_nix-way.templates;
