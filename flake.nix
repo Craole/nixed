@@ -24,6 +24,10 @@
         path = ./templates/rust_fenix;
         description = "Rust Development Environment [Nightly], using fenix";
       };
+      rust-leptos = {
+        path = ./templates/rust_leptos;
+        description = "Rust Development Environment [Nightly], using fenix";
+      };
       rust-workspaces = {
         path = ./templates/rust_workspaces;
         description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
