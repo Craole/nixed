@@ -1,0 +1,50 @@
+error[E0463]: can't find crate for `std`
+
+error: aborting due to previous error
+
+For more information about this error, try `rustc --explain E0463`.
+error[E0463]: can't find crate for `core`
+
+error: aborting due to previous error
+
+For more information about this error, try `rustc --explain E0463`.
+warning: autocfg could not probe for `std`
+error[E0463]: can't find crate for `std`
+
+error[E0463]: can't find crate for `std`
+ --> <anon>:1:1
+  |
+1 | extern crate std as probe;
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ can't find crate
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0463`.
+error[E0463]: can't find crate for `std`
+
+error[E0433]: failed to resolve: maybe a missing crate `core`?
+ --> <anon>:1:9
+  |
+1 | pub use core::convert::TryFrom;
+  |         ^^^^ maybe a missing crate `core`?
+  |
+  = help: consider adding `extern crate core` to use the `core` crate
+
+error: aborting due to 2 previous errors
+
+Some errors have detailed explanations: E0433, E0463.
+For more information about an error, try `rustc --explain E0433`.
+error[E0463]: can't find crate for `std`
+
+error[E0433]: failed to resolve: maybe a missing crate `core`?
+ --> <anon>:1:9
+  |
+1 | pub use core::arch::x86_64::_addcarry_u64;
+  |         ^^^^ maybe a missing crate `core`?
+  |
+  = help: consider adding `extern crate core` to use the `core` crate
+
+error: aborting due to 2 previous errors
+
+Some errors have detailed explanations: E0433, E0463.
+For more information about an error, try `rustc --explain E0433`.

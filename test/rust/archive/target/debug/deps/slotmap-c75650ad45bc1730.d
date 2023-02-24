@@ -1,0 +1,12 @@
+/home/craole/Projects/nixed/test/rust/target/debug/deps/slotmap-c75650ad45bc1730.rmeta: /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/lib.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/basic.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/dense.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/hop.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/secondary.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/sparse_secondary.rs
+
+/home/craole/Projects/nixed/test/rust/target/debug/deps/libslotmap-c75650ad45bc1730.rlib: /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/lib.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/basic.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/dense.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/hop.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/secondary.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/sparse_secondary.rs
+
+/home/craole/Projects/nixed/test/rust/target/debug/deps/slotmap-c75650ad45bc1730.d: /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/lib.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/basic.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/dense.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/hop.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/secondary.rs /home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/sparse_secondary.rs
+
+/home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/lib.rs:
+/home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/basic.rs:
+/home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/dense.rs:
+/home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/hop.rs:
+/home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/secondary.rs:
+/home/craole/.cargo/registry/src/github.com-1ecc6299db9ec823/slotmap-1.0.6/src/sparse_secondary.rs:
