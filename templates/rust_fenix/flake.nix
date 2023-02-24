@@ -4,28 +4,28 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, fenix, nixpkgs }: {
-    packages.x86_64-linux.default = fenix.packages.x86_64-linux.minimal.toolchain;
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ({ pkgs, ... }: {
-          nixpkgs.overlays = [ fenix.overlays.default ];
-          environment.systemPackages = with pkgs; [
-            (fenix.complete.withComponents [
-              "cargo"
-              "clippy"
-              "rust-src"
-              "rustc"
-              "rustfmt"
-            ])
-            rust-analyzer-nightly
-          ];
-        })
-      ];
-    };
-  };
+  outputs = { self, fenix, flake-utils, nixpkgs }:
+    flake-utils.lib.eachDefaultSystem (system: {
+      packages.default =
+        let
+          toolchain = fenix.packages.${system}.minimal.toolchain;
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+
+        (pkgs.makeRustPlatform {
+          cargo = toolchain;
+          rustc = toolchain;
+        }).buildRustPackage {
+          pname = "example";
+          version = "0.1.0";
+
+          src = ./.;
+
+          cargoLock.lockFile = ./Cargo.lock;
+        };
+    });
 }
