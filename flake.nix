@@ -32,10 +32,6 @@
         path = ./templates/rust_workspaces;
         description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
       };
-      rust-hello = {
-        path = ./templates/rust_hello;
-        description = "Simple Hello World in Rust";
-       };
     }
     // templates_NixOS.templates
     // templates_nix-way.templates;
