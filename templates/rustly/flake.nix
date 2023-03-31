@@ -41,16 +41,31 @@
           rust-analyzer
           openssl
           pkg-config
-          exa
           cargo-edit
           cargo-watch
+          exa
+          fd
+          ripgrep
         ];
 
         shellHook = ''
-                  ${pkgs.rustToolchain}/bin/cargo init
-                  ${pkgs.rustToolchain}/bin/rustc -vV
-                  alias ls="exa --all --color-scale --icons"
-                  alias find=fd
+          ${pkgs.rustToolchain}/bin/cargo init
+          ${pkgs.rustToolchain}/bin/rustc -vV
+
+          ls() {
+            exa \
+          	--icons \
+          	--color-scale \
+          	--header \
+          	--no-user \
+          	--git \
+          	--group-directories-first \
+          	--sort=.name \
+          	"$@"
+            }
+          alias find=fd
+          alias grep=rg
+          alias ll="ls --all --long"
         '';
       };
     });
