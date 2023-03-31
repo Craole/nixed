@@ -48,6 +48,7 @@
 
         shellHook = ''
           ${pkgs.rustToolchain}/bin/cargo init
+          ${pkgs.rustToolchain}/bin/rustc -vV
         '';
       };
     });
