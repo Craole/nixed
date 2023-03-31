@@ -20,8 +20,8 @@
 
   outputs = { self, devenv, templates_NixOS, templates_nix-way, ... }: {
     templates = {
-      rust-fenix = {
-        path = ./templates/rust_fenix;
+      rusty = {
+        path = ./templates/rusty;
         description = "Rust Development Environment [Nightly]";
       };
       rust-leptos = {
