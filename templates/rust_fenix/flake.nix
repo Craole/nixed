@@ -5,27 +5,37 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    naersk = {
+      url = "github:nix-community/naersk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, fenix, flake-utils, nixpkgs }:
+  outputs = { self, fenix, flake-utils, naersk, nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system: {
       packages.default =
         let
-          toolchain = fenix.packages.${system}.minimal.toolchain;
           pkgs = nixpkgs.legacyPackages.${system};
+          target = "aarch64-unknown-linux-gnu";
+          toolchain = with fenix.packages.${system}; combine [
+            minimal.cargo
+            minimal.rustc
+            targets.${target}.latest.rust-std
+          ];
         in
 
-        (pkgs.makeRustPlatform {
+        (naersk.lib.${system}.override {
           cargo = toolchain;
           rustc = toolchain;
-        }).buildRustPackage {
-          pname = "example";
-          version = "0.1.0";
-
+        }).buildPackage {
           src = ./.;
-
-          cargoLock.lockFile = ./Cargo.lock;
+          CARGO_BUILD_TARGET = target;
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER =
+            let
+              inherit (pkgs.pkgsCross.aarch64-multiplatform.stdenv) cc;
+            in
+            "${cc}/bin/${cc.targetPrefix}cc";
         };
     });
 }

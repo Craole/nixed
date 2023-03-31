@@ -33,7 +33,7 @@ Project Structure:
 ├── cargo.toml
 ├── config.toml
 
-create a rust development template using a nix flakes solely generated from a config.toml? break code into separate config modules don't hardcode anything, ensure reproducibility, readability and portability. use oxalica/rust-overlay if toolchain is not stable. Include any necessary tools for formating or cargo management
+Create a rust development template using a nix flake solely generated from a config.toml. break code into separate config modules don't hardcode anything, ensure reproducibility, readability and portability. use oxalica/rust-overlay if toolchain is not stable. Include any necessary tools for formating or cargo management
 
 ```cargo.toml
 [project]
