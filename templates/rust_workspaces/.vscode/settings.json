@@ -2,7 +2,8 @@
     "rust-analyzer.checkOnSave.command": "clippy",
     "editor.formatOnSave": true,
     "[rust]": {
-        "editor.defaultFormatter": "matklad.rust-analyzer"
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+        // "editor.defaultFormatter": "matklad.rust-analyzer"
     },
     "rust-analyzer.cargo.allFeatures": true,
     "rust-analyzer.inlayHints.enable": false,
