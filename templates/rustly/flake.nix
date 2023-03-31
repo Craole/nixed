@@ -38,17 +38,19 @@
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
           rustToolchain
+          rust-analyzer
           openssl
           pkg-config
-          cargo-deny
+          exa
           cargo-edit
           cargo-watch
-          rust-analyzer
         ];
 
         shellHook = ''
-          ${pkgs.rustToolchain}/bin/cargo init
-          ${pkgs.rustToolchain}/bin/rustc -vV
+                  ${pkgs.rustToolchain}/bin/cargo init
+                  ${pkgs.rustToolchain}/bin/rustc -vV
+                  alias ls="exa --all --color-scale --icons"
+                  alias find=fd
         '';
       };
     });
