@@ -63,8 +63,8 @@
           	--sort=.name \
           	"$@"
             }
-          alias find=fd
-          alias grep=rg
+          alias find="fd"
+          alias grep="rg"
           alias ll="ls --all --long"
           alias cr="cargo run --quiet"
         '';
