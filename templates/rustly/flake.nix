@@ -1,57 +1,49 @@
 {
-  description = "A Nix-flake-based Rust development environment";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/release-22.11";
-    flake-utils.url = "github:numtide/flake-utils";
-    rust-overlay.url = "github:oxalica/rust-overlay";
-  };
-
+  description = "Rust Nightly Development Environment";
+  inputs =
+    {
+      nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+      flake-utils.url = "github:numtide/flake-utils";
+      rust-overlay.url = "github:oxalica/rust-overlay";
+    };
   outputs =
-    { self
-    , nixpkgs
-    , flake-utils
-    , rust-overlay
-    }:
+    { self, nixpkgs, flake-utils, rust-overlay }:
 
     flake-utils.lib.eachDefaultSystem (system:
     let
       overlays = [
         (import rust-overlay)
         (self: super: {
-          rustToolchain =
-            let
-              rust = super.rust-bin;
-            in
-            if builtins.pathExists ./rust-toolchain.toml then
-              rust.fromRustupToolchainFile ./rust-toolchain.toml
-            else if builtins.pathExists ./rust-toolchain then
-              rust.fromRustupToolchainFile ./rust-toolchain
-            else
-              rust.stable.latest.default;
+          rustToolchain = super.rust-bin.fromRustupToolchainFile ./Rust.toml;
         })
       ];
-
       pkgs = import nixpkgs { inherit system overlays; };
     in
     {
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
+          #/> Language-specific <\#
           rustToolchain
-          rust-analyzer
+          # rust-analyzer
+          # rust-analyzer-nightly
+          rust-analyzer-unwrapped
           openssl
           pkg-config
           cargo-edit
           cargo-watch
+
+          #/> Tools <\#
           exa
           fd
           ripgrep
+
+          #/> Editor <\#
+          vscode
+          vscode-extensions.rust-lang.rust-analyzer-nightly
         ];
 
         shellHook = ''
-          ${pkgs.rustToolchain}/bin/cargo init
-          ${pkgs.rustToolchain}/bin/rustc -vV
-
+          #/> Aliases <\#
           ls() {
             exa \
           	--icons \
@@ -62,11 +54,25 @@
           	--group-directories-first \
           	--sort=.name \
           	"$@"
-            }
+          }
+          ll(){ ls --all --long "$@" ;}
+          cR(){ cargo run --quiet ;}
+          cW(){
+            cargo watch \
+              --quiet \
+              --clear \
+              --exec \
+              "run --quiet --"
+          }
+          rV(){ rustc -vV ;}
+
           alias find="fd"
           alias grep="rg"
-          alias ll="ls --all --long"
-          alias cr="cargo run --quiet"
+
+          #/> Autostart <\#
+          # ${pkgs.rustToolchain}/bin/rustc -vV
+          # ${pkgs.rustToolchain}/bin/cargo run --quiet
+          rV && cR
         '';
       };
     });
