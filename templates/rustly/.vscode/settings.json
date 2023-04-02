@@ -1,12 +1,15 @@
 {
-    "rust-analyzer.checkOnSave.command": "clippy",
+    "rust-analyzer.check.overrideCommand": "clippy",
     "editor.formatOnSave": true,
     "[rust]": {
         "editor.defaultFormatter": "rust-lang.rust-analyzer"
     },
-    "rust-analyzer.cargo.allFeatures": true,
-    "rust-analyzer.inlayHints.enable": false,
-    "rust-analyzer.inlayHints.chainingHints": false,
-    "rust-analyzer.inlayHints.parameterHints": false,
-    "rust-analyzer.updates.channel": "nightly",
+    "rust-analyzer.cargo.features": "all",
+    "rust-analyzer.inlayHints.chainingHints.enable": false,
+    "rust-analyzer.inlayHints.parameterHints.enable": false,
+    // "workbench.colorTheme": "Default Dark+ Experimental",
+    // "editor.fontFamily": "'monospace', monospace",
+    "files.associations": {
+        "*rust-toolchain*": "toml",
+    },
 }
