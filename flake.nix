@@ -19,7 +19,7 @@
     templates_nix-way.url = "github:the-nix-way/dev-templates";
   };
 
-  outputs = { self, devenv, templates_NixOS, templates_nix-way, ... }: {
+  outputs = { self, nixpkgs, devenv, templates_NixOS, templates_nix-way, ... }: {
     templates = {
       rustly = {
         path = ./templates/rustly;
