@@ -80,14 +80,14 @@
               "run --quiet --"
           }
           rV(){ rustc -vV ;}
-
+          codeEdit(){ code . ;}
           alias find="fd"
           alias grep="rg"
 
           #/> Autostart <\#
           # ${pkgs.rustToolchain}/bin/rustc -vV
           # ${pkgs.rustToolchain}/bin/cargo run --quiet
-          rV && cR
+          rV && cR && codeEdit
         '';
       };
     });
