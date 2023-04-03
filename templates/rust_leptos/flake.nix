@@ -63,8 +63,12 @@
           alias cW='cargo leptos watch'
 
           #/> Autostart <\#
-          cI cargo-leptos
-          cargo leptos new --git https://github.com/leptos-rs/start
+          # Check if cargo-leptos is already installed
+          if ! type cargo-leptos &> /dev/null
+          then
+              cargo install cargo-leptos
+          fi
+          cargo init
         '';
       };
     });

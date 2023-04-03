@@ -68,8 +68,8 @@
           '
 
           #/> Autostart <\#
-          rustc -vV
           cargo init
+          rustc -vV
         '';
       };
     });
