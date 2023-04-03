@@ -43,36 +43,6 @@
 
           #/> Editor <\#
           helix
-          vscode-extensions.vscode-icons-team.vscode-icons
-          # (vscode-with-extensions.override {
-          #   vscodeExtensions = with vscode-extensions;
-          #     [
-          #       #| Rust
-          #       rust-lang.rust-analyzer
-          #       serayuzgur.crates
-
-          #       #| TOML
-          #       tamasfe.even-better-toml
-
-          #       #| ShellScript
-          #       timonwong.shellcheck
-
-          #       #| Nix
-          #       kamadorueda.alejandra
-          #       jnoortheen.nix-ide
-          #       mkhl.direnv
-
-          #       #| Web Development
-          #       bradlc.vscode-tailwindcss
-
-          #       #| Settings
-          #       vadimcn.vscode-lldb
-          #       formulahendry.code-runner
-          #       vscode-icons-team.vscode-icons
-          #       antfu.icons-carbon
-          #       roman.ayu-next
-          #     ];
-          # })
         ];
 
         shellHook = ''
