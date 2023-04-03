@@ -27,7 +27,7 @@
         packages = with pkgs; [
           #/> Language-specific <\#
           rustToolchain
-          # rust-analyzer
+          rust-analyzer
           openssl
           pkg-config
           cargo-edit
@@ -38,9 +38,43 @@
           exa
           fd
           ripgrep
-          helix
           sass
-          grass-sass
+
+          #/> Tools <\#
+          helix
+          (vscode-with-extensions.override {
+            vscodeExtensions = with vscode-extensions;
+              [
+                #| Rust
+                rust-lang.rust-analyzer
+                serayuzgur.crates
+
+                #| TOML
+                tamasfe.even-better-toml
+
+                #| ShellScript
+                timonwong.shellcheck
+
+                #| Nix
+                kamadorueda.alejandra
+                jnoortheen.nix-ide
+                mkhl.direnv
+
+                #| Web Development
+                bradlc.vscode-tailwindcss
+                sass
+
+                #| Utilities
+                vadimcn.vscode-lldb
+                formulahendry.code-runner
+                github.copilot
+
+                #| Theme
+                vscode-icons-team.vscode-icons
+                antfu.icons-carbon
+                jdinhlife.gruvbox
+              ];
+          })
         ];
 
         shellHook = ''
