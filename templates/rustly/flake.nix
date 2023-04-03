@@ -5,32 +5,36 @@
     flake-utils.url = "github:numtide/flake-utils";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-    rust-overlay,
-  }:
-    flake-utils.lib.eachDefaultSystem (system: let
+  outputs =
+    { self
+    , nixpkgs
+    , flake-utils
+    , rust-overlay
+    ,
+    }:
+    flake-utils.lib.eachDefaultSystem (system:
+    let
       overlays = [
         (import rust-overlay)
         (self: super: {
           rustToolchain = super.rust-bin.fromRustupToolchainFile ./rust-toolchain;
         })
       ];
-      pkgs = import nixpkgs {inherit system overlays;};
-    in {
+      pkgs = import nixpkgs { inherit system overlays; };
+    in
+    {
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
           #/> Language-specific <\#
           rustToolchain
-          rust-analyzer
+          # rust-analyzer
           # rust-analyzer-nightly
           # rust-analyzer-unwrapped
           openssl
           pkg-config
           cargo-edit
           cargo-watch
+          cargo-generate
 
           #/> Tools <\#
           exa
@@ -38,43 +42,37 @@
           ripgrep
 
           #/> Editor <\#
-          (vscode-with-extensions.override {
-            vscodeExtensions = with vscode-extensions;
-              [
-                #| Rust
-                rust-lang.rust-analyzer
-                serayuzgur.crates
+          helix
+          vscode-extensions.vscode-icons-team.vscode-icons
+          # (vscode-with-extensions.override {
+          #   vscodeExtensions = with vscode-extensions;
+          #     [
+          #       #| Rust
+          #       rust-lang.rust-analyzer
+          #       serayuzgur.crates
 
-                #| TOML
-                tamasfe.even-better-toml
+          #       #| TOML
+          #       tamasfe.even-better-toml
 
-                #| ShellScript
-                timonwong.shellcheck
+          #       #| ShellScript
+          #       timonwong.shellcheck
 
-                #| Nix
-                kamadorueda.alejandra
-                jnoortheen.nix-ide
-                bbenoist.nix
-                mkhl.direnv
+          #       #| Nix
+          #       kamadorueda.alejandra
+          #       jnoortheen.nix-ide
+          #       mkhl.direnv
 
-                #| Web Development
-                bradlc.vscode-tailwindcss
+          #       #| Web Development
+          #       bradlc.vscode-tailwindcss
 
-                #| Settings
-                vadimcn.vscode-lldb
-                formulahendry.code-runner
-                vscode-icons-team.vscode-icons
-                ms-vscode-remote.remote-ssh
-              ]
-              ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-                {
-                  name = "remote-ssh-edit";
-                  publisher = "ms-vscode-remote";
-                  version = "0.47.2";
-                  sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
-                }
-              ];
-          })
+          #       #| Settings
+          #       vadimcn.vscode-lldb
+          #       formulahendry.code-runner
+          #       vscode-icons-team.vscode-icons
+          #       antfu.icons-carbon
+          #       roman.ayu-next
+          #     ];
+          # })
         ];
 
         shellHook = ''
@@ -91,6 +89,7 @@
           	--sort=.name
           '
           alias ll='ls --all --long'
+          alias cI='cargo init'
           alias cR='cargo run --quiet'
           alias cW='cargo watch \
               --quiet \
@@ -104,7 +103,7 @@
           alias grep="rg"
 
           #/> Autostart <\#
-          rV && cR
+          rV && cI && cR
         '';
       };
     });

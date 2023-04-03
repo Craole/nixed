@@ -1,15 +1,26 @@
 {
-    "rust-analyzer.check.overrideCommand": "clippy",
-    "editor.formatOnSave": true,
-    "[rust]": {
-        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    "code-runner.executorMap": {
+        "rust": "cd $dir && cargo run $fileName && $dir$fileNameWithoutExt",
     },
+    "editor.formatOnSave": true,
+    "rust-analyzer.check.overrideCommand": "clippy",
     "rust-analyzer.cargo.features": "all",
     "rust-analyzer.inlayHints.chainingHints.enable": false,
     "rust-analyzer.inlayHints.parameterHints.enable": false,
-    // "workbench.colorTheme": "Default Dark+ Experimental",
-    // "editor.fontFamily": "'monospace', monospace",
+    "[shellscript]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    },
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    },
+    "[toml]": {
+        "editor.defaultFormatter": "tamasfe.even-better-toml"
+    },
     "files.associations": {
         "*rust-toolchain*": "toml",
     },
+    // "workbench.colorTheme": "Default Dark+ Experimental",
+    // "workbench.iconTheme": "vscode-icons",
+    // "workbench.colorTheme": "Ayu Next",
+    // "editor.fontFamily": "'monospace', monospace",
 }
