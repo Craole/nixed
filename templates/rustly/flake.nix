@@ -58,8 +58,7 @@
             --long \
           	--sort=.name
           '
-          alias ll='ls --all --long'
-          alias cI='cargo init'
+          alias cI='cargo install'
           alias cR='cargo run --quiet'
           alias cW='cargo watch \
               --quiet \
@@ -67,13 +66,10 @@
               --exec \
               "run --quiet --"
           '
-          alias rV='rustc -vV'
-          alias codeEdit='code .'
-          alias find="fd"
-          alias grep="rg"
 
           #/> Autostart <\#
-          rV && cI && cR
+          rustc -vV
+          cargo init
         '';
       };
     });

@@ -1,80 +1,71 @@
 {
-  description = "Cosmwasm VM";
+  description = "Rust Nightly Development Environment";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        rust-overlay.follows = "rust-overlay";
-      };
-    };
-    crane = {
-      url = "github:ipetkov/crane";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        rust-overlay.follows = "rust-overlay";
-      };
-    };
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
-  outputs = { self, nixpkgs, crane, flake-utils, rust-overlay }:
+  outputs =
+    { self
+    , nixpkgs
+    , flake-utils
+    , rust-overlay
+    ,
+    }:
     flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ rust-overlay.overlays.default ];
-        };
-      in
-      let
-        # Nightly rust used for wasm runtime compilation
-        rust-nightly =
-          pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+    let
+      overlays = [
+        (import rust-overlay)
+        (self: super: {
+          rustToolchain = super.rust-bin.fromRustupToolchainFile ./rust-toolchain;
+        })
+      ];
+      pkgs = import nixpkgs { inherit system overlays; };
+    in
+    {
+      devShells.default = pkgs.mkShell {
+        packages = with pkgs; [
+          #/> Language-specific <\#
+          rustToolchain
+          # rust-analyzer
+          # rust-analyzer-nightly
+          # rust-analyzer-unwrapped
+          openssl
+          pkg-config
+          cargo-edit
+          cargo-watch
+          cargo-generate
 
-        # Crane lib instantiated with current nixpkgs
-        crane-lib = crane.mkLib pkgs;
+          #/> Tools <\#
+          exa
+          fd
+          ripgrep
 
-        # Crane pinned to nightly Rust
-        crane-nightly = crane-lib.overrideToolchain rust-nightly;
+          #/> Editor <\#
+          helix
+        ];
 
-        src = pkgs.lib.cleanSourceWith {
-          filter = pkgs.lib.cleanSourceFilter;
-          src = pkgs.lib.cleanSourceWith {
-            filter = pkgs.nix-gitignore.gitignoreFilterPure (name: type: true)
-              [ ./.gitignore ] ./.;
-            src = ./.;
-          };
-        };
+        shellHook = ''
+          #/> Aliases <\#
+          alias ls='exa \
+          	--icons \
+          	--color-scale \
+          	--header \
+          	--no-user \
+          	--git \
+          	--group-directories-first \
+            --all \
+            --long \
+          	--sort=.name
+          '
+          alias cI='cargo install'
+          alias cR='cargo run --quiet'
+          alias cW='cargo leptos watch'
 
-        # Default args to crane
-        common-args = {
-          inherit src;
-          buildInputs = [ pkgs.pkg-config pkgs.openssl ]
-            ++ (pkgs.lib.optionals pkgs.stdenv.isDarwin
-            (with pkgs.darwin.apple_sdk.frameworks; [ Security ]));
-        };
-
-        # Common dependencies used for caching
-        common-deps = crane-nightly.buildDepsOnly common-args;
-
-        common-cached-args = common-args // { cargoArtifacts = common-deps; };
-
-      in
-      rec {
-        packages = rec {
-          ccw = crane-nightly.buildPackage common-cached-args;
-          default = ccw;
-        };
-        checks = {
-          package = packages.default;
-          clippy = crane-nightly.cargoClippy (common-cached-args // {
-            cargoClippyExtraArgs = "-- --deny warnings";
-          });
-          fmt = crane-nightly.cargoFmt common-args;
-        };
-        devShell = pkgs.mkShell {
-          buildInputs = [ rust-nightly ]
-            ++ (with pkgs; [ openssl openssl.dev pkgconfig taplo nixfmt bacon ]);
-        };
-      });
+          #/> Autostart <\#
+          cI cargo-leptos
+          cargo leptos new --git https://github.com/leptos-rs/start
+        '';
+      };
+    });
 }
