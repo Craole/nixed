@@ -28,8 +28,6 @@
           #/> Language-specific <\#
           rustToolchain
           # rust-analyzer
-          # rust-analyzer-nightly
-          # rust-analyzer-unwrapped
           openssl
           pkg-config
           cargo-edit
@@ -40,9 +38,9 @@
           exa
           fd
           ripgrep
-
-          #/> Editor <\#
           helix
+          sass
+          grass-sass
         ];
 
         shellHook = ''
@@ -64,11 +62,13 @@
 
           #/> Autostart <\#
           # Check if cargo-leptos is already installed
-          if ! type cargo-leptos &> /dev/null
-          then
-              cargo install cargo-leptos
-          fi
-          cargo init
+          cargo leptos -h &> /dev/null || cargo install cargo-leptos
+
+          # Launch the development browser
+          firefox http://localhost:3000/
+
+          # Check if cargo-leptos is already installed
+          cargo leptos watch
         '';
       };
     });
