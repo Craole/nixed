@@ -20,16 +20,20 @@ nix flake show github:Craole/nixed
 To initialize (where `${ENV}` is listed in the table below):
 
 ```sh
+# Current Poject
 nix flake init --template github:Craole/nixed#${ENV}
+
+# New Project
+nix flake new --template github:Craole/nixed#${ENV} ${NEW_PROJECT_DIRECTORY}
 ```
 
-Here's an example for the Rust Nightly template: [`rustly`](./templates/rustly)`
+Here's an example for the Rust Nightly template ([`rustly`](./templates/rustly))
 
 ```shell
-# Initialize in the current project
+# Current Poject
 nix flake init --template github:Craole/nixed#rustly
 
-# Create a new project
+# New Project
 nix flake new --template github:Craole/nixed#rust ${NEW_PROJECT_DIRECTORY}
 ```
 
