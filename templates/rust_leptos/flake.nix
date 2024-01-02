@@ -35,7 +35,7 @@
           cargo-generate
 
           #/> Tools <\#
-          exa
+          eza
           fd
           ripgrep
           sass
@@ -79,7 +79,7 @@
 
         shellHook = ''
           #/> Aliases <\#
-          alias ls='exa \
+          alias ll='eza \
           	--icons \
           	--color-scale \
           	--header \
