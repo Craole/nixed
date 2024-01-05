@@ -41,5 +41,5 @@ nix flake new --template github:Craole/nixed#rustly ${NEW_PROJECT_DIRECTORY}
 
 Once your preferred template has been initialized, you can use the provided shell in two ways:
 
-1. If you have [`nix-direnv`][nix-direnv] installed, you can initialize the environment by running `direnv allow`.
-2. If you don't have `nix-direnv` installed, you can run `nix develop` to open up the Nix-defined shell.
+1. If [`nix-direnv`][nix-direnv] is installed, it may be used to initialize the environment via `direnv allow`.
+2. Otherwise, running `nix develop` will also initialize the environment.
