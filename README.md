@@ -20,10 +20,10 @@ nix flake show github:Craole/nixed
 To initialize (where `${ENV}` is listed in the table below):
 
 ```sh
-# Current Poject
+#| Current Poject
 nix flake init --template github:Craole/nixed#${ENV}
 
-# New Project
+#| New Project
 nix flake new --template github:Craole/nixed#${ENV} ${NEW_PROJECT_DIRECTORY}
 ```
 
