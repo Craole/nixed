@@ -46,6 +46,8 @@
           type Cr
           type Cb
           type Cw
+
+          cargo run
         '';
       };
     });
