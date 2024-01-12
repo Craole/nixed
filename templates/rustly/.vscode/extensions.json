@@ -1,13 +1,24 @@
 {
   "recommendations": [
+    // >>> SYNTAX
     "rust-lang.rust-analyzer",
-    "serayuzgur.crates",
-    "panicbit.cargo",
     "dustypomerleau.rust-syntax",
-    "swellaby.vscode-rust-test-adapter",
+
+    // >>> PACKAGES
+    "citreae535.sparse-crates",
+
+    // >>> DOCS
     "jscearcy.rust-doc-viewer",
-    "vadimcn.vscode-lldb",
+
+    // >>> TEST
+    "swellaby.vscode-rust-test-adapter",
+    "ms-vscode.test-adapter-converter",
+    "hbenl.vscode-test-explorer",
+
+    // >>> UTILS
     "formulahendry.code-runner",
-    "tamasfe.even-better-toml"
+    "tamasfe.even-better-toml",
+    "PKief.material-icon-theme",
+    "codezombiech.gitignore"
   ]
 }
