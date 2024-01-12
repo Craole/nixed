@@ -5,71 +5,47 @@
     flake-utils.url = "github:numtide/flake-utils";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
-  outputs =
-    { self
-    , nixpkgs
-    , flake-utils
-    , rust-overlay
-    ,
-    }:
-    flake-utils.lib.eachDefaultSystem (system:
-    let
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    rust-overlay,
+  }:
+    flake-utils.lib.eachDefaultSystem (system: let
       overlays = [
         (import rust-overlay)
         (self: super: {
           rustToolchain = super.rust-bin.fromRustupToolchainFile ./rust-toolchain;
         })
       ];
-      pkgs = import nixpkgs { inherit system overlays; };
-    in
-    {
+      pkgs = import nixpkgs {inherit system overlays;};
+    in {
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
-          #/> Language-specific <\#
           rustToolchain
-          # rust-analyzer
-          # rust-analyzer-nightly
-          # rust-analyzer-unwrapped
           openssl
           pkg-config
           cargo-edit
           cargo-watch
           cargo-generate
-
-          #/> Tools <\#
-          eza
-          fd
-          ripgrep
-
-          #/> Editor <\#
-          helix
         ];
 
         shellHook = ''
           #/> Aliases <\#
-          alias ll='eza \
-          	--icons \
-          	--color-scale \
-          	--header \
-          	--no-user \
-          	--git \
-          	--group-directories-first \
-            --all \
-            --long \
-          	--sort=.name
-          '
-          alias cI='cargo install'
-          alias cR='cargo run --quiet'
-          alias cW='cargo watch \
-              --quiet \
-              --clear \
-              --exec \
-              "run --quiet --"
-          '
+          alias Ca='cargo add'
+          alias Cx='cargo remove'
+          alias Cr='cargo run'
+          alias Cb='cargo build'
+          alias Cw='cargo watch --quiet --clear --exec "run --quiet --"'
 
           #/> Autostart <\#
-          cargo init
+          [ -f Cargo.toml ] || cargo init
           rustc -vV
+          type Ca
+          type Cx
+          type Cr
+          type Cb
+          type Cw
         '';
       };
     });

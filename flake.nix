@@ -11,7 +11,7 @@
 #>============================================<#
 
 {
-  description = "Development Environment";
+  description = "Development Environment Templates";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     devenv.url = "github:cachix/devenv/latest";
