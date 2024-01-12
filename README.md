@@ -24,7 +24,7 @@ To initialize (where `${ENV}` is listed in the table below):
 nix flake init --template github:Craole/nixed#${ENV}
 
 #| New Project
-nix flake new --template github:Craole/nixed#${ENV} ${NEW_PROJECT_DIRECTORY}
+nix flake new --template github:Craole/nixed#${ENV} ${NEW_PRJ_DIR}
 ```
 
 Here's an example for the Rust Nightly template ([`rustly`](./templates/rustly))
@@ -34,7 +34,7 @@ Here's an example for the Rust Nightly template ([`rustly`](./templates/rustly))
 nix flake init --template github:Craole/nixed#rustly
 
 # New Project
-nix flake new --template github:Craole/nixed#rustly ${NEW_PROJECT_DIRECTORY}
+nix flake new --template github:Craole/nixed#rustly ${NEW_RUST_DIR}
 ```
 
 ## How to use the templates
