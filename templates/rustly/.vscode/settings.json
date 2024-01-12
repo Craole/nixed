@@ -1,24 +1,15 @@
 {
-    "code-runner.executorMap": {
-        "rust": "cd $dir && cargo run $fileName && $dir$fileNameWithoutExt",
-    },
-    "editor.formatOnSave": true,
-    "rust-analyzer.check.overrideCommand": "clippy",
-    "rust-analyzer.cargo.features": "all",
-    "rust-analyzer.inlayHints.chainingHints.enable": false,
-    "rust-analyzer.inlayHints.parameterHints.enable": false,
-    "[shellscript]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
     "[rust]": {
-        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+        "code-runner.executorMap": {
+            "rust": "cd $dir && cargo run $fileName && $dir$fileNameWithoutExt",
+        },
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        "editor.formatOnSave": true,
+        "editor.inlayHints.enabled": "offUnlessPressed",
+        "files.associations": {
+            "*rust-toolchain*": "toml",
+        },
+        "rust-analyzer.check.command": "clippy",
+        "rust-analyzer.cargo.features": "all",
     },
-    "[toml]": {
-        "editor.defaultFormatter": "tamasfe.even-better-toml"
-    },
-    "files.associations": {
-        "*rust-toolchain*": "toml",
-    },
-    "workbench.iconTheme": "vscode-icons",
-    "workbench.colorTheme": "Thrust Yellow Wash",
 }
