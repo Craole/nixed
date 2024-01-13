@@ -40,7 +40,7 @@
           description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
         };
         rustly = {
-          path = ./export/rustly;
+          path = ./templates/rustly;
           description = "Rust Development Environment [Nightly]";
         };
       }
