@@ -28,19 +28,19 @@
     templates =
       {
         rubyrails = {
-          path = ./templates/ruby_on_rails;
+          path = ./export/ruby_on_rails;
           description = "Ruby on Rails";
         };
         rust-leptos = {
-          path = ./templates/rust_leptos;
+          path = ./export/rust_leptos;
           description = "Rust Web Development Environment [Nightly, Leptos], using fenix";
         };
         rust-workspaces = {
-          path = ./templates/rust_workspaces;
+          path = ./export/rust_workspaces;
           description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
         };
         rustly = {
-          path = ./templates/rustly;
+          path = ./export/rustly;
           description = "Rust Development Environment [Nightly]";
         };
       }
