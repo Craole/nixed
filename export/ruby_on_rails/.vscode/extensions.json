@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    // >>> Language Specific
+    "rebornix.ruby",
+    "Shopify.ruby-lsp",
+    "sorbet.sorbet-vscode-extension",
+    "KoichiSasada.vscode-rdbg",
+    "wingrunr21.vscode-ruby",
+
+    // >>> General Utilities
+    "formulahendry.code-runner",
+    "PKief.material-icon-theme",
+    "codezombiech.gitignore"
+  ]
+}

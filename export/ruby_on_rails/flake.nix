@@ -1,5 +1,5 @@
 {
-  description = "A Nix-flake-based Ruby development environment";
+  description = "Ruby on Rails [Latest]";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
