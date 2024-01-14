@@ -12,12 +12,12 @@
     flake-utils,
   }:
     flake-utils.lib.eachDefaultSystem (system: let
-      # overlays = [
-      #   (self: super: {
-      #     ruby = super.ruby_3_3;
-      #   })
-      # ];
-      pkgs = import nixpkgs {inherit system;};
+      overlays = [
+        (self: super: {
+          ruby = super.ruby_3_3;
+        })
+      ];
+      pkgs = import nixpkgs {inherit overlays system;};
     in {
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
