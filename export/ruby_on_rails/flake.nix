@@ -26,8 +26,6 @@
           export BUNDLE_PATH=./.bundle
           export RUBY_BIN="./.bundle/ruby/3.3.0/bin/"
           export PATH=$RUBY_BIN:$PATH
-          alias R='rails'
-          alias Rss='rails server s'
 
           # Check for Gemfile and run bundle install if necessary
           [ -f Gemfile ] && bundle install
