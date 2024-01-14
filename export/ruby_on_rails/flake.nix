@@ -12,25 +12,29 @@
     flake-utils,
   }:
     flake-utils.lib.eachDefaultSystem (system: let
-      # overlays = [
-      #   (self: super: {
-      #     ruby = super.ruby_3_3;
-      #   })
-      # ];
       pkgs = import nixpkgs {inherit system;};
     in {
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
-          ruby
+          ruby_3_3
           libyaml
+          postgresql
         ];
 
         shellHook = ''
-          # ${pkgs.ruby}/bin/ruby --version
-          [ -f Cargo.toml ] || ${pkgs.ruby}/bin/bundle install
+          # Ensure that Bundler installs gems in the current directory
+          export BUNDLE_PATH=./.bundle
+          export RUBY_BIN="./.bundle/ruby/3.3.0/bin/"
+          export PATH=$RUBY_BIN:$PATH
+          alias R='rails'
+          alias Rss='rails server s'
 
-          alias R='bin/rails'
-          alias Rss='binrails server s'
+          # Check for Gemfile and run bundle install if necessary
+          [ -f Gemfile ] && bundle install
+
+          ruby --version
+          postgres --version
+          rails --version
         '';
       };
     });
