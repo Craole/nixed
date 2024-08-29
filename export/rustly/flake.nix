@@ -92,12 +92,7 @@
                 sed -i "s/^name = .*/name = \"$name\"/" Cargo.toml
               }
               rustc -vV
-              type Ca
-              type Cx
-              type Cr
-              type Cb
-              type Cw
-              type Cwq
+              alias
             '';
           };
           packages.default = self'.packages.rustly;

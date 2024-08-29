@@ -34,7 +34,7 @@ Here's an example for the Rust Nightly template ([`rustly`](./templates/rustly))
 nix flake init --template github:Craole/nixed#rustly
 
 # New Project
-nix flake new --template github:Craole/nixed#rustly ${NEW_RUST_DIR}
+nix flake new --template github:Craole/nixed#rustly ${NEW_PRJ_DIR}
 ```
 
 ## How to use the templates
