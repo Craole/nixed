@@ -1,15 +1,18 @@
 {
-    "code-runner.executorMap": {
-        "rust": "cd $dir && cargo run $fileName && $dir$fileNameWithoutExt",
-    },
-    "files.associations": {
-        "*rust-toolchain*": "toml",
-    },
-    "rust-analyzer.check.command": "clippy",
-    "rust-analyzer.cargo.features": "all",
-    "[ruby]": {
-        "editor.defaultFormatter": "rust-lang.rust-analyzer",
-        "editor.formatOnSave": true,
-        "editor.inlayHints.enabled": "offUnlessPressed",
-    },
+  "code-runner.executorMap": {
+    "rust": "cd $dir && cargo run $fileName && $dir$fileNameWithoutExt",
+  },
+  "files.associations": {
+    "*rust-toolchain*": "toml",
+  },
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.cargo.features": "all",
+  "rust-analyzer.files.excludeDirs": [
+    ".direnv", ".trunk", "target"
+  ],
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true,
+    "editor.inlayHints.enabled": "offUnlessPressed",
+  },
 }

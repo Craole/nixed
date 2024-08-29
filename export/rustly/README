@@ -1,0 +1,62 @@
+# Rustly
+
+This Rust project template is made possible through the power of Nix flakes. The template offers a no-nonsense setup for Rust development, with built-in VSCode configuration (including linting). Simply install [direnv](https://nixos.asia/en/direnv), open the project in VSCode, and follow the prompts — no additional setup is required.
+
+This template utilizes [crane](https://crane.dev/) via [rust-flake](https://github.com/juspay/rust-flake), providing a streamlined experience for Rust developers.
+
+## Getting Started
+
+1. **Set up the development environment:**
+
+   ```bash
+   nix develop
+   ```
+
+1. **Customize the project:**
+
+   - Update the `name` field in `Cargo.toml`.
+   - Run `cargo generate-lockfile` within the Nix shell.
+
+1. **Choose your CI strategy:**
+
+   - There are two CI workflows available. One uses Nix (more robust but potentially slower without caching), and the other uses rustup (faster but with different trade-offs). Choose the one that best fits your needs.
+
+## Development Workflow
+
+This project is built with the flexibility and power of Nix flakes in mind.
+
+- **Enter the development shell:**
+
+  ```bash
+  nix develop
+  ```
+
+- **Run the project:**
+
+  ```bash
+  nix develop -c cargo run
+  ```
+
+- **Build the project:**
+
+  ```bash
+  nix build
+  ```
+
+A [`justfile`](https://just.systems/) is included, offering Makefile-like commands that can be executed within the development shell.
+
+## Community & Support
+
+- Join the discussion on [Zulip](https://nixos.zulipchat.com/#narrow/stream/413950-nix).
+
+## Further Reading
+
+- Check out the [nixos.wiki guide](https://wiki.nixos.org/wiki/Rust#Packaging_Rust_projects_with_nix) on packaging Rust projects with Nix.
+
+______________________________________________________________________
+
+> **Note:** This template is an evolution of the original project by [Srid](https://srid.ca/rust-nix). For the original crate2nix-based version, please visit [this tag](https://github.com/srid/rust-nix-template/tree/crate2nix).
+
+______________________________________________________________________
+
+This version emphasizes that Nix flakes make this template possible and maintains a straightforward, informative style.
