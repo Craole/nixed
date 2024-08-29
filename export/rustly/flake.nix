@@ -78,6 +78,9 @@
               ]);
 
             shellHook = ''
+              #/> Variables <\#
+              export PRJ="$(basename "$PWD")"
+
               #/> Aliases <\#
               alias Ca='cargo add'
               alias Cx='cargo remove'
@@ -86,12 +89,13 @@
               alias Cw='cargo watch --quiet --clear --exec "run --"'
               alias Cwq='cargo watch --quiet --clear --exec "run --quiet --"'
 
-              #/> Autostart <\#
-              [ -f Cargo.toml ] && {
-                name="$(basename "$PWD")"
-                sed -i "s/^name = .*/name = \"$name\"/" Cargo.toml
-              }
-              rustc -vV
+              #/> Project Name <\#
+              sed -i "s/^name = .*/name = \"$PRJ\"/" Cargo.toml
+              sed -i "s/packages\.default = self'\.packages\.rustly;/packages\.default = self'\.packages\.$PRJ;/" flake.nix
+
+              #/> Information <\#
+              rustc --version
+              cargo --version
               alias
             '';
           };
