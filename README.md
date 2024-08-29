@@ -28,7 +28,7 @@ nix flake init --template github:Craole/nixed#${ENV}
 nix flake new --template github:Craole/nixed#${ENV} ${NEW_PRJ_DIR}
 ```
 
-Here's an example for the Rust Nightly template ([`trust`](./templates/trust))
+Here's an example for the Rust template ([`trust`](./templates/trust))
 
 ```shell
 # Current Poject

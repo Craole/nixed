@@ -1,10 +1,10 @@
 #DOC=================================================================<#
 #@ Example Configuration
-#|   This is an example configuration for the dev environment flake.
-#|   It defines a package that installs the 'hello' program.
+#| This is an example configuration for the dev environment flake.
+#| It defines a package that installs the 'hello' program.
 #|
-#|   This configuration can be imported and used in any flake that depends on
-#|   the 'dev-environment-flake'.
+#| This configuration can be imported and used in any flake
+#| that depends on the 'dev-environment-flake'.
 #>=================================================================<#
 
 #DOC==========================================<#

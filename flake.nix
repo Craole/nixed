@@ -20,24 +20,24 @@
 
   outputs =
     {
-      # self,
-      # nixpkgs,
-      # devenv,
+      self,
+      nixpkgs,
+      devenv,
       templates_NixOS,
       templates_nix-way,
       ...
     }:
     {
       templates = {
-        rubyrails = {
+        rails = {
           path = ./export/ruby_on_rails;
           description = "Ruby on Rails";
         };
-        rustos = {
+        rust-leptos = {
           path = ./export/rust_leptos;
           description = "Rust Web Development Environment [Nightly, Leptos], using fenix";
         };
-        rusties = {
+        rustpaces = {
           path = ./export/rust_workspaces;
           description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
         };
