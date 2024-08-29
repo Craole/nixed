@@ -1,8 +1,8 @@
 [package]
-name = "rustly"
-authors = [""]
+name = "trust"
+authors = ["Craig Cole <32288735+Craole@users.noreply.github.com>"]
 edition = "2021"
-description = "A simple Rust project using Nix"
+description = "A rust project generated via Nix Flakes"
 version = "0.1.0"
 
 [dependencies]

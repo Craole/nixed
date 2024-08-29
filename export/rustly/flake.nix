@@ -99,7 +99,7 @@
               alias
             '';
           };
-          packages.default = self'.packages.rustly;
+          packages.default = self'.packages.trust;
         };
     };
 }
