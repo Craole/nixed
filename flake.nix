@@ -45,6 +45,10 @@
           path = ./export/rustly;
           description = "Rust Development Environment [Nightly]";
         };
+        trust = {
+          path = ./export/rustly;
+          description = "Rust Development Environment";
+        };
       } // templates_NixOS.templates // templates_nix-way.templates;
     };
 }
