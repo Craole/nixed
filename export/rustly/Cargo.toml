@@ -1,0 +1,9 @@
+[package]
+name = "rustly"
+authors = [""]
+edition = "2021"
+description = "A simple Rust project using Nix"
+version = "0.1.0"
+
+[dependencies]
+clap = { version = "4.3.14", features = ["derive"] }

@@ -87,7 +87,10 @@
               alias Cwq='cargo watch --quiet --clear --exec "run --quiet --"'
 
               #/> Autostart <\#
-              [ -f Cargo.toml ] || cargo init
+              [ -f Cargo.toml ] && {
+                name="$(basename "$PWD")"
+                sed -i "s/^name = .*/name = \"$name\"/" Cargo.toml
+              }
               rustc -vV
               type Ca
               type Cx
