@@ -12,7 +12,8 @@
 {
   description = "Development Environment Templates";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # devenv.url = "github:cachix/devenv/latest";
     templates_NixOS.url = "github:NixOS/templates";
     templates_nix-way.url = "github:the-nix-way/dev-templates";
