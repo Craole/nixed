@@ -2,7 +2,6 @@
   inputs = {
     systems.url = "github:nix-systems/default";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nur.url = "github:nix-community/NUR";
     rust.url = "github:oxalica/rust-overlay";
   };
 

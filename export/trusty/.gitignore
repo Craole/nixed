@@ -1,0 +1,18 @@
+#| Hidden Files
+.*
+
+#| Git
+!.gitignore
+
+#| Nix
+!.envrc
+.direnv
+result*
+/result
+/result-lib
+# flake.lock
+
+#| Rust
+!.cargo/
+target/
+# Cargo.lock
