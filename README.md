@@ -24,18 +24,19 @@ To initialize (where `${ENV}` is listed in the table below):
 #| Current Poject
 nix flake init --template github:Craole/nixed#${ENV}
 
+
 #| New Project
 nix flake new --template github:Craole/nixed#${ENV} ${NEW_PRJ_DIR}
 ```
 
-Here's an example for the Rust template ([`trust`](./templates/trust))
+Here's an example for the Rust template ([`cc-rust`](./templates/cc-rust))
 
 ```shell
 # Current Poject
-nix flake init --template github:Craole/nixed#trust
+nix flake init --template github:Craole/nixed#cc-rust
 
 # New Project
-nix flake new --template github:Craole/nixed#trust ${NEW_PRJ_DIR}
+nix flake new --template github:Craole/nixed#cc-rust ${NEW_PRJ_DIR}
 ```
 
 ## How to use the templates
