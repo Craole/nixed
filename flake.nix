@@ -55,6 +55,6 @@
           description = "Rust Development Environment";
         };
       } // templates_NixOS.templates // templates_nix-way.templates;
-      defaultTemplate = self.templates.cc.rust;
+      defaultTemplate = self.templates.cc-rust;
     };
 }
