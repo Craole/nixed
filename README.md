@@ -29,7 +29,7 @@ nix flake init --template github:Craole/nixed#${ENV}
 nix flake new --template github:Craole/nixed#${ENV} ${NEW_PRJ_DIR}
 ```
 
-Here's an example for the Rust template ([`cc-rust`](./templates/cc-rust))
+Here's an example for the Rust template ([`cc-rust`](./export/cc-rust))
 
 ```shell
 # Current Poject

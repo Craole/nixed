@@ -12,9 +12,6 @@
 {
   description = "Development Environment Templates";
   inputs = {
-    # nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # devenv.url = "github:cachix/devenv/latest";
     templates_NixOS.url = "github:NixOS/templates";
     templates_nix-way.url = "github:the-nix-way/dev-templates";
   };
@@ -22,37 +19,35 @@
   outputs =
     {
       self,
-      # nixpkgs,
-      # devenv,
       templates_NixOS,
       templates_nix-way,
       ...
     }:
     {
       templates = {
-        cc-rails = {
-          path = ./export/rails;
-          description = "Ruby on Rails";
-        };
-        cc-rust = {
-          path = ./export/rust;
+        dev-rust = {
           description = "Rust Development Environment";
+          path = ./export/dev/rust;
         };
-        cc-rust-leptos = {
-          path = ./export/rust_leptos;
-          description = "Rust Web Development Environment [Nightly, Leptos], using fenix";
+        dev-rust-plus = {
+          description = "Rust Development Environment";
+          path = ./export/dev/rust_plus;
         };
-        cc-rustpaces = {
-          path = ./export/rust_workspaces;
+        dev-rust-mono = {
+          path = ./export/rust/rust_workspaces;
           description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
         };
-        cc-rustly = {
-          path = ./export/rustly;
-          description = "Rust Development Environment [Nightly]";
+        web-rails = {
+          path = ./export/web/rails;
+          description = "Ruby on Rails";
         };
-        cc-rust_plus = {
-          path = ./export/rust_plus;
-          description = "Rust Development Environment";
+        web-raas = {
+          description = "Rust Web Development [Rust, Axum, Askama, SurrealDB]";
+          path = ./export/web/rust_asa;
+        };
+        web-leptos  ={
+          description = "Rust Web Development [Rust, Axum, Askama, SurrealDB]";
+          path = ./export/web/leptos;
         };
       } // templates_NixOS.templates // templates_nix-way.templates;
       defaultTemplate = self.templates.cc-rust;
