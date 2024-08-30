@@ -29,14 +29,14 @@ nix flake init --template github:Craole/nixed#${ENV}
 nix flake new --template github:Craole/nixed#${ENV} ${NEW_PRJ_DIR}
 ```
 
-Here's an example for the Rust template ([`cc-rust`](./export/cc-rust))
+Here's an example for the Rust template ([`dev-rust`](./export/dev/rust))
 
 ```shell
 # Current Poject
-nix flake init --template github:Craole/nixed#cc-rust
+nix flake init --template github:Craole/nixed#dev-rust
 
 # New Project
-nix flake new --template github:Craole/nixed#cc-rust ${NEW_PRJ_DIR}
+nix flake new --template github:Craole/nixed#dev-rust ${NEW_PRJ_DIR}
 ```
 
 ## How to use the templates

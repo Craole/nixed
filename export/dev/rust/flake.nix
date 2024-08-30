@@ -66,13 +66,14 @@
 
               #/> Aliases <\#
               alias A='cargo add'
-              alias X='cargo remove'
-              alias R='cargo run'
               alias B='cargo build --release'
-              alias W='cargo watch --quiet --clear --exec "run --"'
-              alias Q='cargo watch --quiet --clear --exec "run --quiet --"'
               alias C='cargo clean'
               alias F='treefmt'
+              alias N='cargo new'
+              alias Q='cargo watch --quiet --clear --exec "run --quiet --"'
+              alias R='cargo run'
+              alias W='cargo watch --quiet --clear --exec "run --"'
+              alias X='cargo remove'
 
               #/> Information <\#
               rustc --version
