@@ -30,27 +30,31 @@
     }:
     {
       templates = {
-        rails = {
-          path = ./export/ruby_on_rails;
+        cc-rails = {
+          path = ./export/rails;
           description = "Ruby on Rails";
         };
-        rust-leptos = {
+        cc-rust = {
+          path = ./export/rust;
+          description = "Rust Development Environment";
+        };
+        cc-rust-leptos = {
           path = ./export/rust_leptos;
           description = "Rust Web Development Environment [Nightly, Leptos], using fenix";
         };
-        rustpaces = {
+        cc-rustpaces = {
           path = ./export/rust_workspaces;
           description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
         };
-        rustly = {
+        cc-rustly = {
           path = ./export/rustly;
           description = "Rust Development Environment [Nightly]";
         };
-        trust = {
-          path = ./export/trust;
+        cc-rust_plus = {
+          path = ./export/rust_plus;
           description = "Rust Development Environment";
         };
       } // templates_NixOS.templates // templates_nix-way.templates;
-      defaultTemplate = self.templates.trust;
+      defaultTemplate = self.templates.cc.rust;
     };
 }
