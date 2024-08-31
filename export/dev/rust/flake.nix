@@ -3,29 +3,24 @@
     systems.url = "github:nix-systems/default";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     rust.url = "github:oxalica/rust-overlay";
-    # treefmt = {
-    # url = "github:numtide/treefmt-nix";
-    # inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    treefmt = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # flake-parts.url = "github:hercules-ci/flake-parts";
     # flake-root.url = "github:srid/flake-root";
   };
 
-  # outputs =
-  #   inputs:
-  #   inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-  #     systems = import inputs.systems;
-  #     imports = with builtins; map (fn: ./mod/${fn}) (attrNames (readDir ./mod));
-  #   };
   outputs =
     {
       self,
       nixpkgs,
       systems,
       rust,
-    # treefmt,
+      treefmt,
     }:
     let
+      modules = ./config;
       perSystem =
         f:
         nixpkgs.lib.genAttrs (import systems) (
@@ -35,57 +30,58 @@
               inherit system;
               overlays = [
                 (import rust)
-                (self: super: { rustToolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
+                (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile "${modules}/toolchain.toml"; })
               ];
             };
           }
         );
+
+      treefmtEval = perSystem (
+        pkgs:
+        treefmt.lib.evalModule pkgs {
+          projectRootFile = "flake.nix";
+          programs = {
+            nixfmt.enable = true;
+            rustfmt.enable = true;
+            taplo.enable = true;
+            yamlfmt.enable = true;
+            mdformat.enable = true;
+            shfmt.enable = true;
+            shellcheck.enable = true;
+            prettier.enable = true;
+          };
+          settings.formatter = {
+            mdformat = {
+              includes = [
+                "*.md"
+                "LICENSE"
+                "README"
+              ];
+            };
+            shfmt = {
+              includes = [
+                "*.sh"
+                "justfile"
+              ];
+            };
+            taplo = {
+              includes = [
+                "*.toml"
+                "rust-toolchain"
+              ];
+            };
+          };
+        }
+      );
     in
-    # treefmtEval = perSystem (
-    #   pkgs:
-    #   treefmt.lib.evalModule pkgs {
-    #     projectRootFile = "flake.nix";
-    #     programs = {
-    #       nixfmt.enable = true;
-    #       rustfmt.enable = true;
-    #       taplo.enable = true;
-    #       yamlfmt.enable = true;
-    #       mdformat.enable = true;
-    #       shfmt.enable = true;
-    #       shellcheck.enable = true;
-    #       prettier.enable = true;
-    #     };
-    #     settings.formatter = {
-    #       mdformat = {
-    #         includes = [
-    #           "*.md"
-    #           "LICENSE"
-    #           "README"
-    #         ];
-    #       };
-    #       shfmt = {
-    #         includes = [
-    #           "*.sh"
-    #           "justfile"
-    #         ];
-    #       };
-    #       taplo = {
-    #         includes = [
-    #           "*.toml"
-    #           "rust-toolchain"
-    #         ];
-    #       };
-    #     };
-    #   }
-    # );
     {
-      # formatter = perSystem ({ pkgs }: treefmtEval.${pkgs.system}.config.build.wrapper);
-      # checks = perSystem (
-      #   { pkgs }:
-      #   {
-      #     formatting = treefmtEval.${pkgs.system}.config.build.check self;
-      #   }
-      # );
+      formatter = perSystem ({ pkgs }: treefmtEval.${pkgs.system}.config.build.wrapper);
+      checks = perSystem (
+        { pkgs }:
+        {
+          formatting = treefmtEval.${pkgs.system}.config.build.check self;
+        }
+      );
 
       devShells = perSystem (
         { pkgs }:
@@ -93,7 +89,7 @@
           default = pkgs.mkShell {
             packages = with pkgs; [
               # Core
-              rustToolchain
+              toolchain
               openssl
               pkg-config
               cargo-watch
@@ -109,6 +105,7 @@
               ripgrep
               just
               direnv
+              # treefmt
             ];
 
             shellHook = ''

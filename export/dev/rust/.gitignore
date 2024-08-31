@@ -1,6 +1,9 @@
 #| Hidden Files
 .*
 
+#| Config
+!.config/
+
 #| Git
 !.gitignore
 
