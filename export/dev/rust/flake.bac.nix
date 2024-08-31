@@ -3,30 +3,19 @@
     systems.url = "github:nix-systems/default";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     rust.url = "github:oxalica/rust-overlay";
-    # treefmt = {
-    # url = "github:numtide/treefmt-nix";
-    # inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # flake-parts.url = "github:hercules-ci/flake-parts";
-    # flake-root.url = "github:srid/flake-root";
+    treefmt.url = "github:numtide/treefmt-nix";
   };
 
-  # outputs =
-  #   inputs:
-  #   inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-  #     systems = import inputs.systems;
-  #     imports = with builtins; map (fn: ./mod/${fn}) (attrNames (readDir ./mod));
-  #   };
   outputs =
     {
       self,
       nixpkgs,
       systems,
       rust,
-    # treefmt,
+      treefmt,
     }:
     let
-      perSystem =
+      forEachSystem =
         f:
         nixpkgs.lib.genAttrs (import systems) (
           system:
@@ -35,59 +24,14 @@
               inherit system;
               overlays = [
                 (import rust)
-                (self: super: { rustToolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
+                (self: super: { rustToolchain = super.rust-bin.fromRustupToolchainFile ./rust-toolchain; })
               ];
             };
           }
         );
     in
-    # treefmtEval = perSystem (
-    #   pkgs:
-    #   treefmt.lib.evalModule pkgs {
-    #     projectRootFile = "flake.nix";
-    #     programs = {
-    #       nixfmt.enable = true;
-    #       rustfmt.enable = true;
-    #       taplo.enable = true;
-    #       yamlfmt.enable = true;
-    #       mdformat.enable = true;
-    #       shfmt.enable = true;
-    #       shellcheck.enable = true;
-    #       prettier.enable = true;
-    #     };
-    #     settings.formatter = {
-    #       mdformat = {
-    #         includes = [
-    #           "*.md"
-    #           "LICENSE"
-    #           "README"
-    #         ];
-    #       };
-    #       shfmt = {
-    #         includes = [
-    #           "*.sh"
-    #           "justfile"
-    #         ];
-    #       };
-    #       taplo = {
-    #         includes = [
-    #           "*.toml"
-    #           "rust-toolchain"
-    #         ];
-    #       };
-    #     };
-    #   }
-    # );
     {
-      # formatter = perSystem ({ pkgs }: treefmtEval.${pkgs.system}.config.build.wrapper);
-      # checks = perSystem (
-      #   { pkgs }:
-      #   {
-      #     formatting = treefmtEval.${pkgs.system}.config.build.check self;
-      #   }
-      # );
-
-      devShells = perSystem (
+      devShells = forEachSystem (
         { pkgs }:
         {
           default = pkgs.mkShell {
@@ -96,11 +40,11 @@
               rustToolchain
               openssl
               pkg-config
+
+              # Tools
               cargo-watch
               cargo-edit
               cargo-generate
-
-              # Tools
               dust
               eza
               fd
@@ -121,10 +65,9 @@
               h1(){ printf "\\033[1m|> %s <|\\033[0m\\n" "$*" ;}
               versions(){
                 h1 "Versions"
-                apps="rustc cargo hx"
-                for app in $apps; do
-                  "$app" --version
-                done
+                rustc --version
+                cargo --version
+                hx --version
               }
 
               aliases(){
