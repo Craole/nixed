@@ -10,7 +10,7 @@ components = [
   "clippy",
   # "miri",
 ]
-profile = "minimal"
+# profile = "minimal"
 targets = [
   "wasm32-unknown-unknown",
   # "x86_64-unknown-linux-musl",

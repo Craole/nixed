@@ -53,6 +53,7 @@
               just
               direnv
               treefmt
+              tokei
 
               # Formatters
               mdformat
