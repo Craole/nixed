@@ -46,6 +46,7 @@
 
               # Tools
               dust
+              bat
               eza
               pls
               fd
