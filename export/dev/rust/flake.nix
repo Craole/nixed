@@ -3,12 +3,6 @@
     systems.url = "github:nix-systems/default";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     rust.url = "github:oxalica/rust-overlay";
-    treefmt = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # flake-parts.url = "github:hercules-ci/flake-parts";
-    # flake-root.url = "github:srid/flake-root";
   };
 
   outputs =
@@ -17,10 +11,8 @@
       nixpkgs,
       systems,
       rust,
-      treefmt,
     }:
     let
-      modules = ./config;
       perSystem =
         f:
         nixpkgs.lib.genAttrs (import systems) (
@@ -30,59 +22,13 @@
               inherit system;
               overlays = [
                 (import rust)
-                (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile "${modules}/toolchain.toml"; })
+                (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./config/toolchain.toml; })
               ];
             };
           }
         );
-
-      treefmtEval = perSystem (
-        pkgs:
-        treefmt.lib.evalModule pkgs {
-          projectRootFile = "flake.nix";
-          programs = {
-            nixfmt.enable = true;
-            rustfmt.enable = true;
-            taplo.enable = true;
-            yamlfmt.enable = true;
-            mdformat.enable = true;
-            shfmt.enable = true;
-            shellcheck.enable = true;
-            prettier.enable = true;
-          };
-          settings.formatter = {
-            mdformat = {
-              includes = [
-                "*.md"
-                "LICENSE"
-                "README"
-              ];
-            };
-            shfmt = {
-              includes = [
-                "*.sh"
-                "justfile"
-              ];
-            };
-            taplo = {
-              includes = [
-                "*.toml"
-                "rust-toolchain"
-              ];
-            };
-          };
-        }
-      );
     in
     {
-      formatter = perSystem ({ pkgs }: treefmtEval.${pkgs.system}.config.build.wrapper);
-      checks = perSystem (
-        { pkgs }:
-        {
-          formatting = treefmtEval.${pkgs.system}.config.build.check self;
-        }
-      );
-
       devShells = perSystem (
         { pkgs }:
         {
@@ -99,20 +45,25 @@
               # Tools
               dust
               eza
+              pls
               fd
               helix
               helix-gpt
               ripgrep
               just
               direnv
-              # treefmt
+              treefmt
+
+              # Formatters
+              mdformat
+              nodePackages.prettier
+              shellcheck
+              shfmt
+              taplo
+              yamlfmt
             ];
 
             shellHook = ''
-              #/> Variables <\#
-              export PRJ="$PWD"
-              export DIRENV_LOG_FORMAT=""
-
               #/> Functions <\#
               eko(){ printf "%s\n\n" "$*";}
               h1(){ printf "\\033[1m|> %s <|\\033[0m\\n" "$*" ;}
@@ -129,6 +80,27 @@
                 alias | rg --color=never "alias [A-Z]="
               }
 
+              project_root() {
+                  # Check if the current directory or any parent directory is a Git repository
+                  if git rev-parse --show-toplevel > /dev/null 2>&1; then
+                      git rev-parse --show-toplevel
+                  else
+                      # If not a Git repository, search upward for a flake.nix file
+                      dir="$PWD"
+                      while [ "$dir" != "/" ]; do
+                          if [ -f "$dir/flake.nix" ]; then
+                              printf "%s" "$dir"
+                              return
+                          fi
+                          dir=$(dirname "$dir")
+                      done
+
+                      # If flake.nix is not found, print an error message and exit
+                      echo "Error: Could not find project root (either a Git repository or flake.nix)" >&2
+                      return 1
+                  fi
+              }
+
               project_info(){
                 eko "$(versions)"
                 eko "$(aliases)"
@@ -138,11 +110,11 @@
                 h1 "Project"
 
                 if [ -f Cargo.toml ]; then
-                  PRJ="$(basename "$PWD")"
                   for file in Cargo.toml flake.nix; do
+                    prj="$(basename "$(project_root)")"
                     tmp="$(mktemp)"
-                    sed -e "s|packages\.default = self'\.packages\.trust|packages\.default = self'\.packages\.$PRJ|" \
-                      -e "s|^name = .*|name = \"$PRJ\"|" \
+                    sed -e "s|packages\.default = self'\.packages\.trust|packages\.default = self'\.packages\.$prj|" \
+                      -e "s|^name = .*|name = \"$prj\"|" \
                       "$file" >"$tmp"
                     mv -- "$tmp" "$file"
                   done
@@ -153,13 +125,25 @@
                 cargo run --release
               }
 
+              fmt(){
+                treefmt \
+                  --tree-root="$PRJ_ROOT" \
+                  --config-file "$PRJ_ROOT/config/treefmt.toml" \
+                  --allow-missing-formatter \
+                  --ci
+              }
+
+              #/> Variables <\#
+              export DIRENV_LOG_FORMAT=""
+              export PRJ_ROOT="$(project_root)"
+
               #/> Aliases <\#
               alias A='cargo add'
               alias B='cargo build --release'
               alias C='cargo clean'
               alias D='dust --reverse'
               alias E='hx'
-              alias F='treefmt'
+              alias F='fmt'
               alias G='cargo generate'
               alias H='hx .'
               alias I='project_info'
@@ -173,6 +157,7 @@
               alias V='code .'
               alias W='cargo watch --quiet --clear --exec "run --"'
               alias X='cargo remove'
+              alias treefmt='treefmt --config-file "$PRJ_ROOT/config/treefmt.toml" --tree-root="$PRJ_ROOT"'
 
               #/> Initialize <\#
               project_info
