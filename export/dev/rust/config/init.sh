@@ -1,61 +1,96 @@
 #!/bin/sh
+# shellcheck disable=SC2034
 
 #/> Functions <\#
-eko() { printf "%s\n\n" "$*"; }
-h1() { printf "\\033[1m|> %s <|\\033[0m\\n" "$*"; }
+print_block() { printf "%s\n\n" "$*"; }
+print_error() {
+  case "$1" in
+  --dependency)
+    printf "$(tput setaf 1)Missing dependency: $(tput sgr0)%s\\n" "$2" >&2
+    ;;
+  --app)
+    printf "$(tput setaf 1)Y $(tput sgr0)%s\n" "$2" >&2
+    ;;
+  *)
+    printf "$(tput setaf 1)%s$(tput sgr0)\\n" "$*" >&2
+    ;;
+  esac
+}
+print_success() {
+  case "$1" in
+  --app)
+    printf "$(tput setaf 2)N $(tput sgr0)%s\\n" "$2"
+    ;;
+  *)
+    printf "$(tput setaf 2)%s$(tput sgr0)\\n" "$*"
+    ;;
+  esac
+}
+print_heading() { printf "|> %s <|\n" "$*"; }
+
 versions() {
-  h1 "Versions"
   apps="rustc cargo hx"
   for app in $apps; do
-    "$app" --version
+    if command -v "$app" >/dev/null 2>&1; then
+      # "$app" --version
+      print_success --app "$app"
+    else
+      print_error --app "$app"
+    fi
   done
 }
 
 aliases() {
-  h1 "Aliases"
-  alias | rg --color=never "alias [A-Z]="
+  alias | grep "alias [A-Z]="
 }
 
 project_root() {
-  #? Check if the current directory or any parent directory is a Git repository
+  #? Check if the current directory or any parent directory has a flake.nix file
+  dir="$PWD"
+  while [ "$dir" != "/" ]; do
+    if [ -f "$dir/flake.nix" ]; then
+      printf "%s" "$dir"
+      return
+    fi
+    dir=$(dirname "$dir")
+  done
+
+  #? If flake.nix is not found, check if the current directory or any parent directory is a Git repository
   if git rev-parse --show-toplevel >/dev/null 2>&1; then
     git rev-parse --show-toplevel
   else
-    #? If not a Git repository, search upward for a flake.nix file
-    dir="$PWD"
-    while [ "$dir" != "/" ]; do
-      if [ -f "$dir/flake.nix" ]; then
-        printf "%s" "$dir"
-        return
-      fi
-      dir=$(dirname "$dir")
-    done
-
-    #? If flake.nix is not found, print an error message and exit
-    printf "Error: Could not find project root (either a Git repository or flake.nix)\n" >&2
+    #? If not a Git repository, print an error message and exit
+    print_error "Error: Failed to determine the project root (either a Flake or Git repository)\n"
     return 1
   fi
 }
 
 project_info() {
-  eko "$(versions)"
-  eko "$(aliases)"
+  print_heading "Tools" && print_block "$(versions)"
+  print_heading "Aliases" && print_block "$(aliases)"
 }
 
 project_init() {
-  h1 "Project"
+  print_heading "Project"
+  command -v cargo >/dev/null 2>&1 || {
+    print_error --dependency "cargo"
+    return 1
+  }
   if [ -f Cargo.toml ]; then
-    for file in Cargo.toml flake.nix; do
-      prj="$(basename "$PRJ_ROOT")"
-      tmp="$(mktemp)"
-      sed -e "s|packages\.default = self'\.packages\.trust|packages\.default = self'\.packages\.$prj|" \
-        -e "s|^name = .*|name = \"$prj\"|" \
-        "$file" >"$tmp"
-      mv -- "$tmp" "$file"
-    done
+    tmp="$(mktemp)"
+    file="$PRJ_ROOT/Cargo.toml"
+    sed "s|^name = .*|name = \"$PRJ_NAME\"|" "$file" >"$tmp"
+    mv -- "$tmp" "$file"
   else
     cargo init
   fi
+
+  [ -f "$PRJ_ROOT/.cargo/config.toml" ] || {
+    mkdir --parents "$PRJ_ROOT/.cargo"
+    ln --symbolic \
+      "$PRJ_CONF/cargo.toml" \
+      "$PRJ_ROOT/.cargo/config.toml"
+  }
 
   cargo run --release
 }
@@ -69,9 +104,13 @@ fmt() {
 }
 
 #/> Variables <\#
-DIRENV_LOG_FORMAT=""
+set -o allexport
 PRJ_ROOT="$(project_root)"
-export DIRENV_LOG_FORMAT PRJ_ROOT
+PRJ_CONF="${PRJ_ROOT}/config"
+PRJ_NAME="$(basename "${PRJ_ROOT}")"
+DIRENV_LOG_FORMAT=""
+set +o allexport
+# export DIRENV_LOG_FORMAT PRJ_ROOT PRJ_CONF PRJ_NAME
 
 #/> Aliases <\#
 alias A='cargo add'
