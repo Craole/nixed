@@ -3,12 +3,14 @@
   default = pkgs.mkShell {
     packages = with pkgs; [
       # Core
-      toolchain
-      openssl
-      pkg-config
+      # toolchain
       cargo-watch
       cargo-edit
       cargo-generate
+
+      # Dependencies
+      openssl
+      pkg-config
 
       # Tools
       dust
