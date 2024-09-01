@@ -63,7 +63,7 @@
         result;
 
       configPath = locateDir {
-        base = ./config;
+        base = ./config/pop;
         direction = "down";
         items = [
           "toolchain.toml"
