@@ -28,7 +28,7 @@
           itemList = if builtins.isList items then items else [ items ];
 
           #| Function to check if a directory contains any of the target items
-          containsItem = dir: builtins.any (item: builtins.pathExists (dir + "/" + item)) itemList;
+          containsItem = dir: builtins.any (item: builtins.pathExists (dir + "/${item}")) itemList;
 
           # Recursive function to search upwards in the directory tree
           searchUp =
@@ -58,9 +58,8 @@
 
           result = if direction == "up" then "searchUp base" else searchDown base;
         in
-        base;
-
-      # if containsItem base then "yes" else "no";
+        # base;
+        if containsItem base then "yes" else "no";
 
       configPath = locateDir {
         base = ./config;
