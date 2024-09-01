@@ -1,0 +1,26 @@
+{
+  "recommendations": [
+    // >>> SYNTAX
+    "rust-lang.rust-analyzer",
+    "dustypomerleau.rust-syntax",
+
+    // >>> PACKAGES
+    "fill-labs.dependi",
+
+    // >>> DOCS
+    "jscearcy.rust-doc-viewer",
+
+    // >>> TEST
+    "swellaby.vscode-rust-test-adapter",
+    "ms-vscode.test-adapter-converter",
+    "hbenl.vscode-test-explorer",
+
+    // >>> UTILS
+    "formulahendry.code-runner",
+    "tamasfe.even-better-toml",
+    "PKief.material-icon-theme",
+    "codezombiech.gitignore",
+    "jnoortheen.nix-ide",
+    "mkhl.direnv",
+  ]
+}

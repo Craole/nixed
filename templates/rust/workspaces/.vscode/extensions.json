@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "rust-lang.rust-analyzer",
+    "serayuzgur.crates",
+    "panicbit.cargo",
+    "dustypomerleau.rust-syntax",
+    "swellaby.vscode-rust-test-adapter",
+    "jscearcy.rust-doc-viewer",
+    "vadimcn.vscode-lldb",
+    "formulahendry.code-runner",
+    "tamasfe.even-better-toml"
+  ]
+}
