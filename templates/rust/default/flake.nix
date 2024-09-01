@@ -137,9 +137,9 @@
               yamlfmt
             ];
 
-            shellHook = ''
-              . ${debugConfigPath}/init.sh
-            '';
+            # shellHook = ''
+            #   . ${configPath}/init.sh
+            # '';
           };
         }
       );
