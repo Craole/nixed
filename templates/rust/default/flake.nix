@@ -24,6 +24,9 @@
             else
               null;
 
+          #| Get the local path of the base and not the store path
+          base = toString base;
+
           #| Ensure items is a list
           itemList = if builtins.isList items then items else [ items ];
 
