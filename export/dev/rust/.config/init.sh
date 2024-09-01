@@ -2,254 +2,317 @@
 # shellcheck disable=SC2034
 
 helpers_init() {
-  print_block() {
-    printf "%s\n\n" "$*"
-  }
+	print_block() {
+		printf "%s\n\n" "$*"
+	}
 
-  print_status() {
-    unset app icon dep err
-    while [ "$#" -gt 0 ]; do
-      case "$1" in
-      --success) icon="🟢" ;;
-      --failure) icon="🔴" ;;
-      --app) [ "$2" ] && app="$2" ;;
-      --dependency) [ "$2" ] && dep="$2" ;;
-      --error) [ "$2" ] && err="$2" ;;
-      esac
-      shift
-    done
+	print_status() {
+		unset app icon dep err
+		while [ "$#" -gt 0 ]; do
+			case "$1" in
+			--success) icon="🟢" ;;
+			--failure) icon="🔴" ;;
+			--app) [ "$2" ] && app="$2" ;;
+			--dependency) [ "$2" ] && dep="$2" ;;
+			--error) [ "$2" ] && err="$2" ;;
+			esac
+			shift
+		done
 
-    [ "$app" ] && printf "%s %s\n" "$icon" "$app"
-    [ "$dep" ] && {
-      tput setaf 1
-      printf "Missing dependency: " >&2
-      tput sgr0
-      printf "%s\n" "$dep" >&2
-    }
-    [ "$err" ] && {
-      tput setaf 1
-      printf "Error: %s\n" "$err" >&2
-      tput sgr0
-    }
-  }
+		[ "$app" ] && printf "%s %s\n" "$icon" "$app"
+		[ "$dep" ] && {
+			tput setaf 1
+			printf "Missing dependency: " >&2
+			tput sgr0
+			printf "%s\n" "$dep" >&2
+		}
+		[ "$err" ] && {
+			tput setaf 1
+			printf "Error: %s\n" "$err" >&2
+			tput sgr0
+		}
+	}
 
-  print_heading() {
-    tput setaf 4
-    printf "|> %s <|\n" "$*"
-    tput sgr0
-  }
+	print_heading() {
+		tput setaf 4
+		printf "|> %s <|\n" "$*"
+		tput sgr0
+	}
 
-  app_available() {
-    command -v "$1" >/dev/null 2>&1
-  }
+	app_available() {
+		command -v "$1" >/dev/null 2>&1
+	}
 
-  pathof_flake_or_git() {
-    #? Check if the current directory or any parent directory has a flake.nix file
-    dir="$PWD"
-    while [ "$dir" != "/" ]; do
-      if [ -f "$dir/flake.nix" ]; then
-        printf "%s" "$dir"
-        return 0
-      fi
-      dir=$(dirname "$dir")
-    done
+	pathof_flake_or_git() {
+		#? Check if the current directory or any parent directory has a flake.nix file
+		dir="$PWD"
+		while [ "$dir" != "/" ]; do
+			if [ -f "$dir/flake.nix" ]; then
+				printf "%s" "$dir"
+				return 0
+			fi
+			dir=$(dirname "$dir")
+		done
 
-    #? In the unlikely event that this is not a Flake, check if the current directory or any parent directory is a Git repository
-    if git rev-parse --show-toplevel >/dev/null 2>&1; then
-      git rev-parse --show-toplevel
-    else
-      #? If not a Git repository, print an error message and exit
-      print_status --error "Failed to determine the project root (either a Flake or Git repository)"
-      return 2
-    fi
-  }
+		#? In the unlikely event that this is not a Flake, check if the current directory or any parent directory is a Git repository
+		if git rev-parse --show-toplevel >/dev/null 2>&1; then
+			git rev-parse --show-toplevel
+		else
+			#? If not a Git repository, print an error message and exit
+			print_status --error "Failed to determine the project root (either a Flake or Git repository)"
+			return 2
+		fi
+	}
 
-  create_file() {
-    while [ "$#" -gt 0 ]; do
+	create_file() {
+		while [ "$#" -gt 0 ]; do
 
-      #? Create the parent directory if it doesn't exist
-      case "$1" in
-      */*) mkdir --parents "$(dirname "$1")" ;;
-      esac
+			#? Create the parent directory if it doesn't exist
+			case "$1" in
+			*/*) mkdir --parents "$(dirname "$1")" ;;
+			esac
 
-      #? Create the file
-      touch "$1"
+			#? Create the file
+			touch "$1"
 
-      shift
-    done
-  }
+			shift
+		done
+	}
 
-  find_first() {
-    search_root="$PRJ_ROOT"
-    search_depth=2
-    search_type="file"
+	find_first() {
+		search_root="$PRJ_ROOT"
+		search_depth=2
+		search_type="file"
 
-    while [ "$#" -gt 0 ]; do
-      case "$1" in
-      --path) [ "$2" ] && search_root=$2 ;;
-      --target) [ "$2" ] && search_target="$2" ;;
-      --depth) [ "$2" ] && search_depth="$2" ;;
-      --type) search_type="$2" ;;
-      *) search_target="$1" ;;
-      esac
-      shift
-    done
+		while [ "$#" -gt 0 ]; do
+			case "$1" in
+			--path) [ "$2" ] && search_root=$2 ;;
+			--target) [ "$2" ] && search_target="$2" ;;
+			--depth) [ "$2" ] && search_depth="$2" ;;
+			--type) search_type="$2" ;;
+			*) search_target="$1" ;;
+			esac
+			shift
+		done
 
-    search_type="${search_type%"${search_type#?}"}"
+		search_type="${search_type%"${search_type#?}"}"
 
-    find \
-      -L "$search_root" \
-      -maxdepth "$search_depth" \
-      -type "$search_type" \
-      -iname "$search_target" |
-      head -n1
-  }
+		find \
+			-L "$search_root" \
+			-maxdepth "$search_depth" \
+			-type "$search_type" \
+			-iname "$search_target" |
+			head -n1
+	}
 }
 
 project_info() {
 
-  variables() {
-    #@ Variables @#
-    #| Project Root Directory
-    set -o allexport
-    if pathof_flake_or_git >/dev/null 2>&1; then
-      PRJ_ROOT="$(pathof_flake_or_git)"
-    else
-      pathof_flake_or_git
-      return "$?"
-    fi
+	variables() {
+		#@ Variables @#
+		#| Project Root Directory
+		set -o allexport
+		if pathof_flake_or_git >/dev/null 2>&1; then
+			PRJ_ROOT="$(pathof_flake_or_git)"
+		else
+			pathof_flake_or_git
+			return "$?"
+		fi
 
-    #| Project Config Directory
-    PRJ_CONF="$(dirname "$(find_first --target "init*")")"
+		#| Project Config Directory
+		PRJ_CONF="$(dirname "$(find_first --target "init*")")"
 
-    #| Project Readme
-    PRJ_INFO=$(find_first --target "readme*")
+		#| Project Readme
+		PRJ_INFO="$(find_first --target "readme*")"
 
-    #| Project Name
-    PRJ_NAME="$(basename "$PRJ_ROOT")"
+		#| Project Name
+		PRJ_NAME="$(basename "$PRJ_ROOT")"
 
-    #| Direnv Log Format
-    app_available direnv && DIRENV_LOG_FORMAT=""
-    
-    set +o allexport
+		#| Direnv Log Format
+		app_available direnv && DIRENV_LOG_FORMAT=""
 
-    print_heading "Variables"
-    print_block "$(
-      for var in PRJ_NAME PRJ_ROOT PRJ_CONF PRJ_INFO; do
-        eval "val=\$$var"
-        [ -n "$val" ] && printf '%s=%s\n' "$var" "$val"
-      done
-    )"
-  }
+		#| Just
+		app_available just && {
+			JUST_JUSTFILE="$(find_first --target "justfile")"
+			JUST_UNSTABLE=true
+		}
 
-  aliases() {
-    #@ Aliases @#
-    app_available bat && alias cat='bat --style=plain'
+		set +o allexport
 
-    app_available cargo && alias A='cargo add'
-    app_available cargo && alias B='cargo build --release'
-    app_available cargo && alias C='cargo clean'
-    app_available dust && alias D='dust --reverse'
-    app_available hx && alias E='hx'
-    app_available treefmt && alias F='treefmt --tree-root="$PRJ_ROOT" --config-file "$PRJ_CONF/treefmt.toml" --allow-missing-formatter --ci'
-    app_available cargo && alias G='cargo generate'
-    app_available hx && alias H='hx "$PRJ_ROOT"'
-    alias I='project_init'
-    app_available just && alias J='just'
-    alias K='exit'
-    if app_available pls; then
-      alias ls='pls --almost-all --group-directories-first --color=always'
-    elif app_available eza; then
-      alias ls='eza --almost-all --group-directories-first --color=always --icons=always'
-      alias L='ls --long --git --git-ignore'
-      alias La='ls --long --git'
-      alias Lt='L --tree'
-    elif app_available lsd; then
-      alias ls='lsd --almost-all --group-directories-first --color=always'
-      alias L='ls --long --git --date=relative --hyperlink=auto --versionsort --total-size'
-      alias Lt='L --tree'
-    else
-      alias ls='ls --almost-all --group-directories-first --color=always'
-      alias L='ls -l'
-      alias Lt='L --recursive'
-    fi
-    alias M='mkdir --parents'
-    app_available cargo && alias N='cargo new'
-    app_available cargo && alias O='cargo outdated'
-    alias P='project_info'
-    app_available cargo && alias Q='cargo watch --quiet --clear --exec "run --quiet --"'
-    app_available cargo && alias R='cargo run --release'
-    app_available cargo && alias S='cargo search'
-    alias T='create_file'
-    alias U='project_update'
-    app_available code && alias V='code "$PRJ_ROOT"'
-    app_available cargo && alias W='cargo watch --quiet --clear --exec "run --"'
-    app_available cargo && alias X='cargo remove'
-    if [ -f "$PRJ_INFO" ]; then
-      alias Y='cat "$PRJ_INFO"'
-    else
-      alias Y='project_info'
-    fi
-    alias Z='tokei'
+		print_heading "Variables"
+		print_block "$(
+			for var in PRJ_NAME PRJ_ROOT PRJ_CONF PRJ_INFO; do
+				eval "val=\$$var"
+				[ -n "$val" ] && printf '%s=%s\n' "$var" "$val"
+			done
 
-    print_heading "Aliases"
-    print_block "$(alias | grep "alias [A-Z]=")"
-  }
+			app_available just && {
 
-  utilities() {
-    print_heading "Utilities"
-    print_block "$(
-      apps="cargo code dust hx just rustc tokei treefmt"
-      for app in $apps; do
-        if app_available "$app"; then
-          print_status --success --app "$app"
-        else
-          print_status --failure --app "$app"
-        fi
-      done
-    )"
-  }
+				for var in JUST_JUSTFILE JUST_UNSTABLE; do
+					eval "val=\$$var"
+					[ -n "$val" ] && printf '%s=%s\n' "$var" "$val"
+				done
+			}
+		)"
+	}
 
-  variables || return "$?"
-  aliases
-  utilities
+	aliases() {
+		#@ Aliases @#
+		app_available bat && alias cat='bat --style=plain'
+
+		app_available cargo && alias A='cargo add'
+		app_available cargo && alias B='cargo build --release'
+		app_available cargo && alias C='project clean'
+		app_available dust && alias D='cargo remove'
+		app_available hx && alias E='hx'
+		alias F='project_format'
+		app_available cargo && alias G='cargo generate'
+		app_available hx && alias H='hx "$PRJ_ROOT"'
+		alias I='project_init'
+		app_available just && alias J='just'
+		alias K='exit'
+		if app_available eza; then
+			alias ls='eza --almost-all --group-directories-first --color=always --icons=always'
+			alias L='ls --long --git --git-ignore'
+			alias La='ls --long --git'
+			alias Lt='L --tree'
+		elif app_available lsd; then
+			alias ls='lsd --almost-all --group-directories-first --color=always'
+			alias L='ls --long --git --date=relative --hyperlink=auto --versionsort --total-size'
+			alias Lt='L --tree'
+		else
+			alias ls='ls --almost-all --group-directories-first --color=always'
+			alias L='ls -l'
+			alias Lt='L --recursive'
+		fi
+		app_available pls && alias Lp='pls --det perm --det oct --det user --det group --det mtime --det git --det size --header false'
+		alias M='mkdir --parents'
+		app_available cargo && alias N='cargo new'
+		app_available cargo && alias O=''
+		alias P='project_info'
+		alias Ps='project_info --size'
+		app_available cargo && alias Q='cargo watch --quiet --clear --exec "run --quiet --"'
+		app_available cargo && alias R='cargo run --release'
+		app_available cargo && alias S='cargo search'
+		alias T='create_file'
+		alias U='project_update'
+		app_available code && alias V='code "$PRJ_ROOT"'
+		app_available cargo && alias W='cargo watch --quiet --clear --exec "run --"'
+		app_available cargo && alias X='project clean --reset'
+		if [ -f "$PRJ_INFO" ]; then
+			alias Y='cat "$PRJ_INFO"'
+		else
+			alias Y='project_info'
+		fi
+		alias Z='tokei'
+
+		print_heading "Aliases"
+		print_block "$(alias | grep "alias [A-Z]=")"
+	}
+
+	size_check() {
+		print_heading "Storage Utilization"
+		if app_available dust ;then
+		dust --reverse
+		else
+		
+	}
+
+	utilities() {
+		print_heading "Utilities"
+		print_block "$(
+			apps="cargo code dust hx just rustc tokei treefmt"
+			for app in $apps; do
+				if app_available "$app"; then
+					print_status --success --app "$app"
+				else
+					print_status --failure --app "$app"
+				fi
+			done
+		)"
+	}
+
+	variables || return "$?"
+	utilities
+	aliases
+	case "$1" in --size | --detailed) size_check ;; esac
 }
 
 project_init() {
-  print_heading "Project"
-  app_available cargo || {
-    print_status \
-      --error "Initialization failed" \
-      --dependency "cargo"
-    return 127
-  }
-  if [ -f Cargo.toml ]; then
-    tmp="$(mktemp)"
-    file="$PRJ_ROOT/Cargo.toml"
-    sed "s|^name = .*|name = \"$PRJ_NAME\"|" "$file" >"$tmp"
-    mv -- "$tmp" "$file"
-  else
-    cargo init
-  fi
+	print_heading "Project"
+	app_available cargo || {
+		print_status \
+			--error "Initialization failed" \
+			--dependency "cargo"
+		return 127
+	}
+	if [ -f Cargo.toml ]; then
+		tmp="$(mktemp)"
+		file="$PRJ_ROOT/Cargo.toml"
+		sed "s|^name = .*|name = \"$PRJ_NAME\"|" "$file" >"$tmp"
+		mv -- "$tmp" "$file"
+	else
+		cargo init
+	fi
 
-  [ -f "$PRJ_ROOT/.cargo/config.toml" ] || {
-    mkdir --parents "$PRJ_ROOT/.cargo"
-    ln --symbolic \
-      "$PRJ_CONF/cargo.toml" \
-      "$PRJ_ROOT/.cargo/config.toml"
-  }
+	[ -f "$PRJ_ROOT/.cargo/config.toml" ] || {
+		mkdir --parents "$PRJ_ROOT/.cargo"
+		ln --symbolic \
+			"$PRJ_CONF/cargo.toml" \
+			"$PRJ_ROOT/.cargo/config.toml"
+	}
 
-  cargo run --release
+	cargo run --release
 }
 
 project_update() {
-  app_available nix && nix flake update
-  app_available cargo && cargo update
-  app_available geet && geet --push
+	app_available nix && nix flake update
+	app_available cargo && cargo update
+	app_available geet && geet --push
+}
+
+project_format() {
+	app_available treefmt &&
+		treefmt \
+			--tree-root="$PRJ_ROOT" \
+			--config-file "$PRJ_CONF/treefmt.toml" \
+			--allow-missing-formatter \
+			--ci
+
+	app_available just && just --fmt --quiet
+}
+
+project_clean() {
+	case "$1" in
+	-x | --reset)
+		garbage="
+		"$PRJ_ROOT/.git"
+		"$PRJ_ROOT/.cargo"
+		"$PRJ_ROOT/Cargo.toml"
+		"$PRJ_ROOT/Cargo.lock"
+		"$PRJ_ROOT/src"
+		"$PRJ_ROOT/.direnv"
+		"$PRJ_ROOT/target"
+		"
+		;;
+	*)
+		garbage="$PRJ_ROOT/.direnv"
+		app_available cargo && cargo clean
+		;;
+	esac
+
+	if app_available trash; then
+		trash put "$garbage"
+	else
+		rm -rf "$garbage"
+	fi
 }
 
 main() {
-  helpers_init
-  project_info || return "$?"
-  project_init || return "$?"
+	helpers_init
+	project_info || return "$?"
+	project_init || return "$?"
+	# If project_info fails, main will immediately exit with the same status code.
+	#
+	# If project_init fails, main will immediately exit with the same status code.
 } && main "$@"

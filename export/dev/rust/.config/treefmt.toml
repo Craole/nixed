@@ -1,5 +1,5 @@
 [global]
-excludes = [".git/*", ".direnv/*", "target/*", "result/*", "*.lock"]
+excludes = [".git/*", ".direnv/*", "target/*", "result/*", "*.lock", "justfile"]
 
 [formatter.mdformat]
 command = "mdformat"
@@ -52,10 +52,7 @@ priority = 0
 [formatter.shfmt]
 command = "shfmt"
 options = ["-s", "-w"]
-includes = [
-"*.sh", 
-  ".gitignore",
-"justfile", ".env*"]
+includes = ["*.sh", ".gitignore", "justfile", ".env*"]
 priority = 1
 
 [formatter.taplo]

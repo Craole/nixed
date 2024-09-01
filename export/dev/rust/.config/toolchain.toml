@@ -1,15 +1,16 @@
 [toolchain]
 channel = "stable"
-# components = [
-#   # https://rust-lang.github.io/rustup/concepts/components.html
-#   "rustc",
-#   "cargo",
-#   "rustfmt",
-#   "rust-src",
-#   "rust-analyzer",
-#   "clippy",
-#   # "miri",
-# ]
+
+components = [
+  # https://rust-lang.github.io/rustup/concepts/components.html
+  "rustc",
+  "cargo",
+  "rustfmt",
+  "rust-src",
+  "rust-analyzer",
+  "clippy",
+  # "miri",
+]
 # # profile = "minimal"
 # targets = [
 #   "wasm32-unknown-unknown",

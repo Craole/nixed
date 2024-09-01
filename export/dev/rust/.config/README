@@ -1,0 +1,66 @@
+# Nixed: Rust Development Environment
+
+This is the default [Rust](https://github.com/rust-lang/rust) template in [Nixed](https://github.com/Craole/Nixed) series of templates. It's a good starting point for new Rust projects with several utilities made available that aim to enhance developer experience.
+
+## Installation
+
+This template is designed to be deployed via nix flakes but is also available as a standalone package but with limited features. You can install it via:
+
+> With nix flakes
+
+```shell
+  #| New Directory
+  nix flake new --template github:Craole/nixed#rust ${project_name}
+
+  #| Existing Directory
+  nix flake init --template github:Craole/nixed#rust
+
+```
+
+> Without nix flakes
+
+```shell
+  # create a new directory for your project
+  project_name="rusty_nail"
+  mkdir ${project_name}
+  cd ${project_name}
+
+  # initialize a new git repository
+  git init
+
+  # add the nixed repository as a remote
+  # this will allow you to pull the template from nixed
+  git remote add origin https://github.com/Craole/nixed.git
+
+  # set up sparse checkout so that we only pull the template
+  # and not the entire nixed repository
+  git config core.sparseCheckout true
+
+  # specify which files we want to pull
+  echo "export/dev/rust/*" > .git/info/sparse-checkout
+
+  # pull the template
+  git pull origin master
+
+  # create a temporary directory
+  mkdir -p temp
+
+  # move the template files into the temporary directory
+  mv export/dev/rust/* temp/
+
+  # delete the export directory
+  # this is the directory that contains the template
+  # we don't need it anymore
+  rm -rf export
+
+  # move the files from the temporary directory to the current directory
+  mv temp/* .
+
+  # delete the temporary directory
+  rmdir temp
+
+  # source the init script
+  # this will set up some environment variables
+  # and create some default files
+  . /.config/init.sh
+```

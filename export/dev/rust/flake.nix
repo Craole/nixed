@@ -2,7 +2,7 @@
   inputs = {
     systems.url = "github:nix-systems/default";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # rust.url = "github:oxalica/rust-overlay";
+    rust.url = "github:oxalica/rust-overlay";
   };
 
   outputs =
@@ -10,7 +10,7 @@
       self,
       nixpkgs,
       systems,
-      # rust,
+      rust,
     }:
     let
       perSystem =
@@ -35,28 +35,28 @@
           default = pkgs.mkShell {
             packages = with pkgs; [
               # Dependencies
-              # openssl
-              # pkg-config
+              openssl
+              pkg-config
 
               # Core
-              # toolchain
-              # cargo-watch
-              # cargo-edit
-              # cargo-generate
+              toolchain
+              cargo-watch
+              cargo-edit
+              cargo-generate
 
-              # Tools
-              dust
+              # Utilities
               bat
+              direnv
+              dust
               eza
-              pls
               fd
               helix
-              helix-gpt
-              ripgrep
               just
-              direnv
-              treefmt
+              pls
+              ripgrep
               tokei
+              trashy
+              treefmt
 
               # Formatters
               mdformat
