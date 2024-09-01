@@ -87,9 +87,11 @@
               inherit system;
               overlays = [
                 (import rust)
-                (self: super: {
-                  toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml");
-                })
+                # (self: super: {
+                #   toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml";
+                # })
+                            toolchain = super.rust-bin.fromRustupToolchainFile "${debugConfigPath}/toolchain.toml";
+
                 # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
             };
@@ -136,7 +138,7 @@
             ];
 
             shellHook = ''
-              . ${configPath}/init.sh
+              . ${debugConfigPath}/init.sh
             '';
           };
         }
