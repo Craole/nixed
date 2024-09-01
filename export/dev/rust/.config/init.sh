@@ -66,21 +66,50 @@ helpers_init() {
 
   create_file() {
     while [ "$#" -gt 0 ]; do
+
+      #? Create the parent directory if it doesn't exist
       case "$1" in
       */*) mkdir --parents "$(dirname "$1")" ;;
       esac
 
+      #? Create the file
       touch "$1"
 
       shift
     done
+  }
+
+  find_first() {
+    search_root="$PRJ_ROOT"
+    search_depth=2
+    search_type="file"
+
+    while [ "$#" -gt 0 ]; do
+      case "$1" in
+      --path) [ "$2" ] && search_root=$2 ;;
+      --target) [ "$2" ] && search_target="$2" ;;
+      --depth) [ "$2" ] && search_depth="$2" ;;
+      --type) search_type="$2" ;;
+      esac
+      shift
+    done
+
+    search_type="${search_type%"${search_type#?}"}"
+
+    find \
+      -L "${search_root:-$PRJ_ROOT}" \
+      -maxdepth "$search_depth" \
+      -type "$search_type" \
+      -iname "$search_target" |
+      head -n1
   }
 }
 
 project_info() {
 
   variables() {
-    #/> Variables <\#
+    #@ Variables @#
+    #| Project Root Directory
     set -o allexport
     if pathof_flake_or_git >/dev/null 2>&1; then
       PRJ_ROOT="$(pathof_flake_or_git)"
@@ -88,9 +117,17 @@ project_info() {
       pathof_flake_or_git
       return "$?"
     fi
-    PRJ_INFO=$(find -L "$PRJ_ROOT" -maxdepth 1 -iname "readme*" | head -n1)
-    PRJ_CONF="${PRJ_ROOT}/config"
-    PRJ_NAME="$(basename "${PRJ_ROOT}")"
+
+    #| Project Config Directory
+    PRJ_CONF="$(dirname "$(find_first --target "init*")")"
+
+    #| Project Readme
+    PRJ_INFO=$(find_first --target "readme*")
+
+    #| Project Name
+    PRJ_NAME="$(basename "$PRJ_ROOT")"
+
+    #| Direnv Log Format
     app_available direnv && DIRENV_LOG_FORMAT=""
     set +o allexport
 
@@ -104,8 +141,7 @@ project_info() {
   }
 
   aliases() {
-
-    #/> Aliases <\#
+    #@ Aliases @#
     app_available bat && alias cat='bat --style=plain'
 
     app_available cargo && alias A='cargo add'

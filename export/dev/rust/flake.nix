@@ -21,8 +21,8 @@
             pkgs = import nixpkgs {
               inherit system;
               overlays = [
-                # (import rust)
-                # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./config/toolchain.toml; })
+                (import rust)
+                (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
             };
           }
@@ -68,7 +68,7 @@
             ];
 
             shellHook = ''
-              . ./config/init.sh
+              . ./.config/init.sh
             '';
           };
         }
