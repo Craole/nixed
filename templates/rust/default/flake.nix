@@ -47,19 +47,20 @@
             let
               subdirs = builtins.filter (
                 name:
-                builtins.pathExists (dir + "/" + name) && builtins.isAttrs (builtins.readDir (dir + "/" + name))
+                builtins.pathExists (dir + "/${name}") && builtins.isAttrs (builtins.readDir (dir + "/${name}"))
               ) (builtins.attrNames (builtins.readDir dir));
-              found = builtins.filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
+              found = builtins.filter containsItem (map (subdir: dir + "/${subdir}") subdirs);
             in
             if found != [ ] then
               builtins.head found
             else
-              builtins.any (subdir: searchDown (dir + "/" + subdir)) subdirs;
+              builtins.any (subdir: searchDown (dir + "/${subdir}")) subdirs;
 
-          result = if direction == "up" then "searchUp base" else searchDown base;
+          result = if direction == "up" then searchUp base else searchDown base;
         in
         # base;
-        if containsItem base then "yes" else "no";
+        # if containsItem base then base else "no";
+        result;
 
       configPath = locateDir {
         base = ./config;
