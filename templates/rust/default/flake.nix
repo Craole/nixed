@@ -84,7 +84,7 @@
               overlays = [
                 (import rust)
                 (self: super: {
-                  toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml";
+                  toolchain = super.rust-bin.fromRustupToolchainFile configPath + "/toolchain.toml";
                 })
                 # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
