@@ -13,18 +13,57 @@
       rust,
     }:
     let
-      # configPath = ./.config;
+  locateDir =
+    {
+      base ? ./.,
+      direction ? "down",
+      items,
+    }:
 
     let
-      locateDir = rootPath: possible_children: search_direction: let
-        check = file: builtins.pathExists (path + "/" + file);
-      in
-        if check "toolchain.toml" && check "init.sh" then
-          path
-        else
-          builtins.throw "Configuration path not found";
+      #| Validate the direction parameter
+      _ = if direction != "up" && direction != "down" then
+            throw "Invalid direction: must be 'up' or 'down'"
+          else null;
 
-      configPath = locateSubdir ./.;
+      #| Ensure items is a list
+      itemList = toList items;
+
+      #| Function to check if a directory contains any of the target items
+      containsItem = dir: any (item: pathExists (dir + "/" + item)) itemList;
+
+      # Recursive function to search upwards in the directory tree
+      searchUp =
+        dir:
+        if containsItem dir then
+          dir
+        else
+          let
+            parent = dirOf dir;
+          in
+          if parent == dir then null else searchUp parent;
+
+      # Recursive function to search downwards in the directory tree
+      searchDown =
+        dir:
+        let
+          subdirs = filter isDirectory (attrNames (readDir dir));
+          found = filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
+        in
+        if found != [ ] then head found else any (subdir: searchDown (dir + "/" + subdir)) subdirs;
+
+    in
+    if direction == "up" then searchUp base else searchDown base;
+
+      # configPath = ./.config;
+      configPath = locateDir {
+        base = ./.;
+        direction = "down";
+        items = [
+          "toolchain.toml"
+          "init.sh"
+        ];
+      };
 
       perSystem =
         f:

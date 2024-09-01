@@ -1,44 +1,61 @@
 {
   description = "Development Environment Templates";
   inputs = {
-    templates_NixOS.url = "github:NixOS/templates";
-    templates_nix-way.url = "github:the-nix-way/dev-templates";
+    NixOS.url = "github:NixOS/templates";
+    The-Nix-Way.url = "github:the-nix-way/dev-templates";
   };
 
   outputs =
     {
       self,
-      templates_NixOS,
-      templates_nix-way,
+      NixOS,
+      The-Nix-Way,
       ...
     }:
+    let
+      templatesPath = ./templates;
+    in
     {
-      templates = {
-        dev-rust = {
-          description = "Rust Development Environment";
-          path = ./export/dev/rust;
+      templates =
+        NixOS.templates //
+        The-Nix-Way.templates //
+        {
+          # Rust
+          rust = {
+            description = "Rust Development Environment";
+            path = templatesPath + "/rust/default";
+          };
+          rust-mono = {
+            description = "Rust Development Environment [Cargo Workspaces]";
+            path = templatesPath + "/rust/workspaces";
+          };
+          rust-bi = {
+            description = "Business Intelligence Stack [Rust, Pydantic, Polars, Plotters, Nom]";
+            path = templatesPath + "/rust/pbi";
+          };
+          rust-ds = {
+            description = "Business Intelligence Stack [Rust, Polars, Linfa, Plotters]";
+            path = templatesPath + "/rust/data-sci";
+          };
+          rust-aas = {
+            description = "Web Stack [Rust, Axum, Askama, SurrealDB ]";
+            path = templatesPath + "/rust/raas";
+          };
+          rust-ats = {
+            description = "Web Stack [Rust, Actix, Tera, SQLx]";
+            path = templatesPath + "/rust/rats";
+          };
+          rust-leptos = {
+            description = "Rust Web Development [Leptos]";
+            path = templatesPath + "/rust/leptos";
+          };
+
+          # Ruby
+          rails = {
+            description = "Ruby on Rails";
+            path = templatesPath + "/ruby/rails";
+          };
         };
-        dev-rust-plus = {
-          description = "Rust Development Environment";
-          path = ./export/dev/rust_plus;
-        };
-        dev-rust-mono = {
-          path = ./export/rust/rust_workspaces;
-          description = "Rust Development Environment [Nightly] [Cargo Workspaces], using fenix";
-        };
-        web-rails = {
-          path = ./export/web/rails;
-          description = "Ruby on Rails";
-        };
-        web-raas = {
-          description = "Rust Web Development [Rust, Axum, Askama, SurrealDB]";
-          path = ./export/web/rust_asa;
-        };
-        web-leptos  ={
-          description = "Rust Web Development [Rust, Axum, Askama, SurrealDB]";
-          path = ./export/web/leptos;
-        };
-      } // templates_NixOS.templates // templates_nix-way.templates;
-      defaultTemplate = self.templates.cc-rust;
+      defaultTemplate = self.templates.rust;
     };
 }
