@@ -56,7 +56,8 @@
             else
               builtins.any (subdir: searchDown (dir + "/" + subdir)) subdirs;
         in
-        if direction == "up" then searchUp base else searchDown base;
+        direction;
+      # if direction == "up" then searchUp base else searchDown base;
 
       configPath = locateDir {
         base = ./.;
