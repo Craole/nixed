@@ -64,7 +64,7 @@
         in
         if direction == "up" then searchUp base else searchDown base;
 
-      configPath = ".config";
+      configPath = ./. + ".config";
       # configPath = locateDir {
       #   base = ./.;
       #   direction = "down";
