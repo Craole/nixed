@@ -90,6 +90,7 @@ helpers_init() {
       --target) [ "$2" ] && search_target="$2" ;;
       --depth) [ "$2" ] && search_depth="$2" ;;
       --type) search_type="$2" ;;
+      *) search_target="$1" ;;
       esac
       shift
     done
@@ -97,7 +98,7 @@ helpers_init() {
     search_type="${search_type%"${search_type#?}"}"
 
     find \
-      -L "${search_root:-$PRJ_ROOT}" \
+      -L "$search_root" \
       -maxdepth "$search_depth" \
       -type "$search_type" \
       -iname "$search_target" |
@@ -129,6 +130,7 @@ project_info() {
 
     #| Direnv Log Format
     app_available direnv && DIRENV_LOG_FORMAT=""
+    
     set +o allexport
 
     print_heading "Variables"
