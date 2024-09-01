@@ -87,10 +87,10 @@
               inherit system;
               overlays = [
                 (import rust)
-                # (self: super: {
+                (self: super: {
                 #   toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml";
-                # })
-                            toolchain = super.rust-bin.fromRustupToolchainFile "${debugConfigPath}/toolchain.toml";
+                  toolchain = super.rust-bin.fromRustupToolchainFile "${debugConfigPath}/toolchain.toml";
+                })
 
                 # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
