@@ -53,6 +53,7 @@
                 name:
                 builtins.pathExists (dir + "/" + name) && builtins.isAttrs (builtins.readDir (dir + "/" + name))
               ) (builtins.attrNames (builtins.readDir dir));
+              # subdirs = builtins.filter builtins.isDirectory (builtins.attrNames (builtins.readDir dir));
               found = builtins.filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
             in
             if found != [ ] then
@@ -83,7 +84,7 @@
               overlays = [
                 (import rust)
                 (self: super: {
-                  toolchain = super.rust-bin.fromRustupToolchainFile (configPath + "/toolchain.toml");
+                  toolchain = super.rust-bin.fromRustupToolchainFile  (builtins.trace configPath "${configPath}/toolchain.toml");
                 })
                 # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
