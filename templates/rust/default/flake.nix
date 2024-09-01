@@ -50,7 +50,7 @@
           subdirs = builtins.filter builtins.isDirectory (builtins.attrNames (builtins.readDir dir));
           found = builtins.filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
         in
-        if found != [ ] then builtins.head found else any (subdir: searchDown (dir + "/" + subdir)) subdirs;
+        if found != [ ] then builtins.head found else builtins.any (subdir: searchDown (dir + "/" + subdir)) subdirs;
 
     in
     if direction == "up" then searchUp base else searchDown base;
