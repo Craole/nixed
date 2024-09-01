@@ -73,9 +73,9 @@
       #     "init.sh"
       #   ];
       # };
- # Debugging output for configPath
- debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
-  debugPathCheck = builtins.trace "Resolved path: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
+      # Debugging output for configPath
+      debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
+      debugPathCheck = builtins.trace "Resolved path: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
 
 
       perSystem =
