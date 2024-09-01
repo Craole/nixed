@@ -53,14 +53,12 @@
                 name:
                 builtins.pathExists (dir + "/" + name) && builtins.isAttrs (builtins.readDir (dir + "/" + name))
               ) (builtins.attrNames (builtins.readDir dir));
-              # subdirs = builtins.filter builtins.isDirectory (builtins.attrNames (builtins.readDir dir));
               found = builtins.filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
             in
             if found != [ ] then
               builtins.head found
             else
               builtins.any (subdir: searchDown (dir + "/" + subdir)) subdirs;
-
         in
         if direction == "up" then searchUp base else searchDown base;
 
@@ -75,8 +73,7 @@
       # };
       # Debugging output for configPath
       debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
-      debugPathCheck = builtins.trace "Resolved path: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
-
+      toolchainPath = builtins.trace "Resolved path: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
 
       perSystem =
         f:
@@ -88,8 +85,8 @@
               overlays = [
                 (import rust)
                 (self: super: {
-                #   toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml";
-                  toolchain = super.rust-bin.fromRustupToolchainFile "${debugConfigPath}/toolchain.toml";
+                  #   toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml";
+                  toolchain = super.rust-bin.fromRustupToolchainFile toolchainPath;
                 })
 
                 # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
