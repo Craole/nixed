@@ -27,10 +27,10 @@
           else null;
 
       #| Ensure items is a list
-      itemList = toList items;
+      itemList = if builtins.isList items then items else [ items ];
 
       #| Function to check if a directory contains any of the target items
-      containsItem = dir: any (item: pathExists (dir + "/" + item)) itemList;
+      containsItem = dir: any (item: builtins.pathExists (dir + "/" + item)) itemList;
 
       # Recursive function to search upwards in the directory tree
       searchUp =
@@ -39,7 +39,7 @@
           dir
         else
           let
-            parent = dirOf dir;
+            parent = builtins.dirOf dir;
           in
           if parent == dir then null else searchUp parent;
 
@@ -47,10 +47,10 @@
       searchDown =
         dir:
         let
-          subdirs = filter isDirectory (attrNames (readDir dir));
+          subdirs = builtins.filter builtins.isDirectory (builtins.attrNames (builtins.readDir dir));
           found = filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
         in
-        if found != [ ] then head found else any (subdir: searchDown (dir + "/" + subdir)) subdirs;
+        if found != [ ] then builtins.head found else any (subdir: searchDown (dir + "/" + subdir)) subdirs;
 
     in
     if direction == "up" then searchUp base else searchDown base;
