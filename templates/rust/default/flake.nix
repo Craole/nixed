@@ -73,6 +73,11 @@
       #     "init.sh"
       #   ];
       # };
+ # Debugging output for configPath
+ debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
+  # Or if you need to check paths or other variables:
+  debugPathCheck = builtins.trace "Resolved path: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
+
 
       perSystem =
         f:
@@ -84,7 +89,7 @@
               overlays = [
                 (import rust)
                 (self: super: {
-                  toolchain = super.rust-bin.fromRustupToolchainFile (configPath + "/toolchain.toml");
+                  toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml");
                 })
                 # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
