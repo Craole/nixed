@@ -10,7 +10,7 @@
     { nixpkgs, ... }:
     let
       # Define your path here
-      configPath = ./. + "/config";
+      configPath = ./. + "/.config";
 
       # Debugging output
       debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
