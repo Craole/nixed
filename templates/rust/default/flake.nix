@@ -64,15 +64,15 @@
         in
         if direction == "up" then searchUp base else searchDown base;
 
-      # configPath = ./.config;
-      configPath = locateDir {
-        base = ./.;
-        direction = "down";
-        items = [
-          "toolchain.toml"
-          "init.sh"
-        ];
-      };
+      configPath = ./.config;
+      # configPath = locateDir {
+      #   base = ./.;
+      #   direction = "down";
+      #   items = [
+      #     "toolchain.toml"
+      #     "init.sh"
+      #   ];
+      # };
 
       perSystem =
         f:
@@ -84,7 +84,7 @@
               overlays = [
                 (import rust)
                 (self: super: {
-                  toolchain = super.rust-bin.fromRustupToolchainFile "${builtins.toString configPath}/toolchain.toml";
+                  toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml";
                 })
                 # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
