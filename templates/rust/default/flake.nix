@@ -6,27 +6,28 @@
     rust.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = { nixpkgs, ... }:
-  let
-    # Define your path here
-    configPath = ./.config;
+  outputs =
+    { nixpkgs, ... }:
+    let
+      # Define your path here
+      configPath = ./. + "/config";
 
-    # Debugging output
-    debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
-    debugToolchainPath = builtins.trace "toolchain path is: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
-  in
-  {
-    defaultPackage.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.stdenv.mkDerivation {
-      pname = "debug-path";
-      version = "1.0";
+      # Debugging output
+      debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
+      debugToolchainPath = builtins.trace "toolchain path is: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
+    in
+    {
+      defaultPackage.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.stdenv.mkDerivation {
+        pname = "debug-path";
+        version = "1.0";
 
-      buildInputs = [ ];
+        buildInputs = [ ];
 
-      installPhase = ''
-        mkdir -p $out
-        echo "configPath is: ${debugConfigPath}" > $out/debug.txt
-        echo "toolchain path is: ${debugToolchainPath}" >> $out/debug.txt
-      '';
+        installPhase = ''
+          mkdir -p $out
+          # echo "configPath is: ${debugConfigPath}" > $out/debug.txt
+          # echo "toolchain path is: ${debugToolchainPath}" >> $out/debug.txt
+        '';
+      };
     };
-  };
 }
