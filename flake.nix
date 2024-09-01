@@ -1,14 +1,3 @@
-#DOC==========================================<#
-#@ Project Structure
-#|   .
-#|   ├── configuration
-#|   │   ├── default.nix
-#|   │   └── devShell.nix
-#|   └── flake.nix
-
-#@ Project File
-#| flake.nix
-#>============================================<#
 {
   description = "Development Environment Templates";
   inputs = {

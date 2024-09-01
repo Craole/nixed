@@ -13,6 +13,19 @@
       rust,
     }:
     let
+      # configPath = ./.config;
+
+    let
+      locateDir = rootPath: possible_children: search_direction: let
+        check = file: builtins.pathExists (path + "/" + file);
+      in
+        if check "toolchain.toml" && check "init.sh" then
+          path
+        else
+          builtins.throw "Configuration path not found";
+
+      configPath = locateSubdir ./.;
+
       perSystem =
         f:
         nixpkgs.lib.genAttrs (import systems) (
@@ -22,7 +35,10 @@
               inherit system;
               overlays = [
                 (import rust)
-                (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
+                (self: super: {
+                  toolchain = super.rust-bin.fromRustupToolchainFile "${configPath}/toolchain.toml";
+                })
+                # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
               ];
             };
           }
@@ -68,7 +84,7 @@
             ];
 
             shellHook = ''
-              . ./.config/init.sh
+              . ${configPath}/init.sh
             '';
           };
         }
