@@ -55,12 +55,15 @@
               builtins.head found
             else
               builtins.any (subdir: searchDown (dir + "/" + subdir)) subdirs;
+
+          result = if direction == "up" then "searchUp base" else searchDown base;
         in
-        direction;
-      # if direction == "up" then searchUp base else searchDown base;
+        base;
+
+      # if containsItem base then "yes" else "no";
 
       configPath = locateDir {
-        base = ./.;
+        base = ./config;
         direction = "down";
         items = [
           "toolchain.toml"
