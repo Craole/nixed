@@ -28,5 +28,5 @@
         echo "toolchain path is: ${debugToolchainPath}" >> $out/debug.txt
       '';
     };
-  }
+  };
 }
