@@ -48,7 +48,7 @@
         dir:
         let
           subdirs = builtins.filter builtins.isDirectory (builtins.attrNames (builtins.readDir dir));
-          found = filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
+          found = builtins.filter containsItem (map (subdir: dir + "/" + subdir) subdirs);
         in
         if found != [ ] then builtins.head found else any (subdir: searchDown (dir + "/" + subdir)) subdirs;
 
