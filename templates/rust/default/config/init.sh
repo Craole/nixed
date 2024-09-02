@@ -126,7 +126,7 @@ project_info() {
 		PRJ_INFO="$(find_first --target "readme*")"
 
 		#| Project Name
-		PRJ_NAME="$(basename "$PRJ_ROOT")"
+		PRJ_NAME="$(basename "$PRJ_ROOT" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
 
 		#| Direnv Log Format
 		app_available direnv && DIRENV_LOG_FORMAT=""
@@ -172,13 +172,13 @@ project_info() {
 		app_available just && alias J='just'
 		alias K='exit'
 		if app_available eza; then
-			alias ls='eza --almost-all --group-directories-first --color=always --icons=always'
-			alias L='ls --long --git --git-ignore'
+			alias ls='eza --almost-all --group-directories-first --color=always --icons=always --git --git-ignore --time-style relative --total-size --smart-group'
+			alias L='ls --long '
 			alias La='ls --long --git'
 			alias Lt='L --tree'
 		elif app_available lsd; then
 			alias ls='lsd --almost-all --group-directories-first --color=always'
-			alias L='ls --long --git --date=relative --hyperlink=auto --versionsort --total-size'
+			alias L='ls --long --git --date=relative --versionsort --total-size'
 			alias Lt='L --tree'
 		else
 			alias ls='ls --almost-all --group-directories-first --color=always'
@@ -253,7 +253,7 @@ project_init() {
 		sed "s|^name = .*|name = \"$PRJ_NAME\"|" "$file" >"$tmp"
 		mv -- "$tmp" "$file"
 	else
-		cargo init
+		cargo init --name "$PRJ_NAME"
 	fi
 
 	[ -f "$PRJ_ROOT/.cargo/config.toml" ] || {
@@ -263,7 +263,7 @@ project_init() {
 			"$PRJ_ROOT/.cargo/config.toml"
 	}
 
-	cargo run --release
+	cargo build --release
 }
 
 project_update() {
@@ -272,7 +272,7 @@ project_update() {
 	app_available geet && geet --push
 }
 
-project_format() {
+project_repo() project_format() {
 	app_available treefmt &&
 		treefmt \
 			--tree-root="$PRJ_ROOT" \
@@ -284,20 +284,21 @@ project_format() {
 }
 
 project_clean() {
+	garbage=""
 	case "$1" in
 	-x | --reset)
 		garbage="
-		"$PRJ_ROOT/.git"
-		"$PRJ_ROOT/.cargo"
-		"$PRJ_ROOT/Cargo.toml"
-		"$PRJ_ROOT/Cargo.lock"
-		"$PRJ_ROOT/src"
-		"$PRJ_ROOT/.direnv"
-		"$PRJ_ROOT/target"
+			.git 
+			.cargo 
+			Cargo.toml 
+			Cargo.lock 
+			src 
+			.direnv 
+			target
 		"
 		;;
 	*)
-		garbage="$PRJ_ROOT/.direnv"
+		garbage=".direnv"
 		app_available cargo && cargo clean
 		;;
 	esac
@@ -309,8 +310,9 @@ project_clean() {
 			rm -rf "$1"
 		fi
 	}
-	
-	for path in $garbage; do
+
+	for item in $garbage; do
+		path="$PRJ_ROOT/$item"
 		[ -e "$path" ] && delete "$path"
 	done
 }
