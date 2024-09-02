@@ -272,7 +272,74 @@ project_update() {
 	app_available geet && geet --push
 }
 
-project_repo() project_format() {
+project_git() {
+	# Function to initialize a Git repository if not already initialized
+	init_repo() {
+		# if [ ! -d .git ]; then
+		# 	printf "Initializing new Git repository...\n"
+		# 	git init
+		# else
+		# 	printf "Git repository already initialized.\n"
+		# fi
+
+		[ ! -d .git ] && {
+			print_status "Initializing new Git repository..."
+		}
+	}
+
+	# Function to add changes to the staging area
+	add_changes() {
+		printf "Adding changes to the staging area...\n"
+		git add .
+	}
+
+	# Function to commit changes with a provided message or a default one
+	commit_changes() {
+		# Join all remaining arguments as the commit message
+		COMMIT_MSG="$*"
+		if [ -z "$COMMIT_MSG" ]; then
+			COMMIT_MSG="Auto-commit"
+		fi
+		printf "Committing changes with message: '%s'\n" "$COMMIT_MSG"
+		git commit -m "$COMMIT_MSG"
+	}
+
+	# Function to pull from the remote repository
+	pull_changes() {
+		printf "Pulling latest changes from remote...\n"
+		git pull
+	}
+
+	# Function to push changes to the remote repository
+	push_changes() {
+		printf "Pushing changes to remote...\n"
+		git push
+	}
+
+	# Main workflow
+	init_repo
+
+	# Check if a remote is configured
+	if [ "$(git remote get-url origin >/dev/null 2>&1)" ]; then
+		if [ "$(git status --porcelain >/dev/null 2>&1)" ]; then
+			printf "Local changes detected. Please commit or stash your changes before pulling.\n"
+			# TODO: List changes and give a prompt to continue
+			return 1
+		else
+			pull_changes
+		fi
+
+		add_changes
+		commit_changes "$@"
+		push_changes
+	else
+		add_changes
+		commit_changes "$@"
+		printf "No remote repository configured. Skipping pull and push.\n"
+	fi
+}
+
+project_format() {
 	app_available treefmt &&
 		treefmt \
 			--tree-root="$PRJ_ROOT" \
@@ -288,12 +355,12 @@ project_clean() {
 	case "$1" in
 	-x | --reset)
 		garbage="
-			.git 
-			.cargo 
-			Cargo.toml 
-			Cargo.lock 
-			src 
-			.direnv 
+			.git
+			.cargo
+			Cargo.toml
+			Cargo.lock
+			src
+			.direnv
 			target
 		"
 		;;
