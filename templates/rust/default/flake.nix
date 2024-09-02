@@ -1,5 +1,4 @@
 {
-
   inputs = {
     systems.url = "github:nix-systems/default";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -7,92 +6,193 @@
   };
 
   outputs =
-    { nixpkgs, ... }:
+    {
+      self,
+      nixpkgs,
+      systems,
+      rust,
+    }:
     let
-      locateDir =
+      inherit (builtins)
+        any
+        attrNames
+        dirOf
+        elem
+        filter
+        head
+        isList
+        map
+        pathExists
+        readDir
+        tail
+        toPath
+        ;
+
+      pathOf =
         {
           base ? ./.,
-          direction ? "down",
+          direction ? "both",
           items,
         }:
 
         let
-          #| Validate the direction parameter
-          _ =
-            if direction != "up" && direction != "down" then
-              throw "Invalid direction: must be 'up' or 'down'"
-            else
-              null;
-
-          #| Get the local path of the base and not the store path
-          base = toString base;
+          #| Ensure the base is a valid path
+          basePath = toPath base;
 
           #| Ensure items is a list
-          itemList = if builtins.isList items then items else [ items ];
+          itemList = if isList items then items else [ items ];
 
-          #| Function to check if a directory contains any of the target items
-          containsItem = dir: builtins.any (item: builtins.pathExists (dir + "/${item}")) itemList;
-
-          # Recursive function to search upwards in the directory tree
-          searchUp =
-            dir:
-            if containsItem dir then
-              dir
-            else
-              let
-                parent = builtins.dirOf dir;
-              in
-              if parent == dir then null else searchUp parent;
-
-          # Recursive function to search downwards in the directory tree
-          searchDown =
+          #| Function to find the first existing item in the directory
+          findItem =
             dir:
             let
-              subdirs = builtins.filter (
-                name:
-                builtins.pathExists (dir + "/${name}") && builtins.isAttrs (builtins.readDir (dir + "/${name}"))
-              ) (builtins.attrNames (builtins.readDir dir));
-              found = builtins.filter containsItem (map (subdir: dir + "/${subdir}") subdirs);
+              existingItems = filter (item: pathExists (dir + ("/" + item))) itemList;
             in
-            if found != [ ] then
-              builtins.head found
+            if existingItems == [ ] then null else dir + ("/" + head existingItems);
+
+          #| Function to get parent directory
+          dirAbove =
+            dir:
+            let
+              parent = dirOf dir;
+            in
+            if parent == dir then null else parent;
+
+          #| Function to get subdirectories
+          dirBelow =
+            dir:
+            let
+              dirContents = readDir dir;
+            in
+            map (name: dir + ("/" + name)) (
+              filter (name: dirContents.${name} == "directory") (attrNames dirContents)
+            );
+
+          #| Generic search function
+          search =
+            dir: getNext:
+            let
+              foundItem = findItem dir;
+            in
+            if foundItem != null then
+              foundItem
             else
-              builtins.any (subdir: searchDown (dir + "/${subdir}")) subdirs;
+              let
+                next = getNext dir;
+              in
+              if next == null then
+                null
+              else if isList next then
+                searchList next getNext
+              else
+                search next getNext;
 
-          result = if direction == "up" then searchUp base else searchDown base;
+          #| Helper function to search a list of directories
+          searchList =
+            dirs: getNext:
+            if dirs == [ ] then
+              null
+            else
+              let
+                result = search (head dirs) getNext;
+              in
+              if result != null then result else searchList (tail dirs) getNext;
+
+          # Function to get next directory based on search direction
+          getNext = if direction == "up" then dirAbove else dirBelow;
         in
-        # base;
-        # if containsItem base then base else "no";
-        result;
+        assert
+          elem direction [
+            "up"
+            "down"
+            "both"
+          ]
+          || throw "Invalid direction: must be 'up' or 'down'";
 
-      configPath = locateDir {
-        base = ./config/pop;
-        direction = "down";
+        # If direction is not specified, search in both directions
+        if direction == "both" then
+          let
+            downSearch = search basePath dirBelow;
+            upSearch = search basePath dirAbove;
+          in
+          if downSearch != null then downSearch else upSearch
+        else
+          search basePath getNext;
+
+      configPath = dirOf (pathOf {
+        items = "init.sh";
+      });
+
+      toolchainPath = pathOf {
         items = [
           "toolchain.toml"
-          "init.sh"
+          "toolchain"
+          "rust-toolchain"
+          "rust-toolchain.toml"
         ];
       };
 
-      # Define your path here
-      # configPath = ./. + "/config";
+      perSystem =
+        f:
+        nixpkgs.lib.genAttrs (import systems) (
+          system:
+          f {
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = [
+                (import rust)
+                (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile toolchainPath; })
 
-      # Debugging output
-      debugConfigPath = builtins.trace "configPath is: ${configPath}" configPath;
-      debugToolchainPath = builtins.trace "toolchain path is: ${debugConfigPath}/toolchain.toml" "${debugConfigPath}/toolchain.toml";
+                # (self: super: { toolchain = super.rust-bin.fromRustupToolchainFile ./.config/toolchain.toml; })
+              ];
+            };
+          }
+        );
     in
     {
-      defaultPackage.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.stdenv.mkDerivation {
-        pname = "debug-path";
-        version = "1.0";
+      devShells = perSystem (
+        { pkgs }:
+        {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              # Dependencies
+              openssl
+              pkg-config
 
-        buildInputs = [ ];
+              # Core
+              toolchain
+              cargo-watch
+              cargo-edit
+              cargo-generate
 
-        installPhase = ''
-          mkdir -p $out
-          # echo "configPath is: ${debugConfigPath}" > $out/debug.txt
-          # echo "toolchain path is: ${debugToolchainPath}" >> $out/debug.txt
-        '';
-      };
+              # Utilities
+              bat
+              direnv
+              dust
+              eza
+              fd
+              helix
+              just
+              pls
+              ripgrep
+              tokei
+              trashy
+              treefmt
+
+              # Formatters
+              mdformat
+              nodePackages.prettier
+              shellcheck
+              shfmt
+              taplo
+              yamlfmt
+            ];
+
+            shellHook = ''
+              . ${configPath}/init.sh
+            '';
+          };
+        }
+      );
     };
 }

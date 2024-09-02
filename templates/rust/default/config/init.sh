@@ -162,7 +162,7 @@ project_info() {
 
 		app_available cargo && alias A='cargo add'
 		app_available cargo && alias B='cargo build --release'
-		app_available cargo && alias C='project clean'
+		app_available cargo && alias C='project_clean'
 		app_available dust && alias D='cargo remove'
 		app_available hx && alias E='hx'
 		alias F='project_format'
@@ -198,7 +198,7 @@ project_info() {
 		alias U='project_update'
 		app_available code && alias V='code "$PRJ_ROOT"'
 		app_available cargo && alias W='cargo watch --quiet --clear --exec "run --"'
-		app_available cargo && alias X='project clean --reset'
+		app_available cargo && alias X='project_clean --reset'
 		if [ -f "$PRJ_INFO" ]; then
 			alias Y='cat "$PRJ_INFO"'
 		else
@@ -212,10 +212,11 @@ project_info() {
 
 	size_check() {
 		print_heading "Storage Utilization"
-		if app_available dust ;then
-		dust --reverse
+		if app_available dust; then
+			dust --reverse
 		else
-		
+			du
+		fi
 	}
 
 	utilities() {
@@ -301,11 +302,17 @@ project_clean() {
 		;;
 	esac
 
-	if app_available trash; then
-		trash put "$garbage"
-	else
-		rm -rf "$garbage"
-	fi
+	delete() {
+		if app_available trash; then
+			trash put "$1"
+		else
+			rm -rf "$1"
+		fi
+	}
+	
+	for path in $garbage; do
+		[ -e "$path" ] && delete "$path"
+	done
 }
 
 main() {

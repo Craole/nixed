@@ -1,10 +1,17 @@
 [global]
-excludes = [".git/*", ".direnv/*", "target/*", "result/*", "*.lock", "justfile"]
+excludes = [
+  ".git/*",
+  ".direnv/*",
+  "target/*",
+  "result/*",
+  "*.lock",
+  "**/*justfile",
+]
 
 [formatter.mdformat]
 command = "mdformat"
 excludes = []
-includes = ["*.md", "LICENSE", "README"]
+includes = ["*.md", "**/*LICENSE", "**/*README"]
 options = []
 priority = 0
 
@@ -52,13 +59,13 @@ priority = 0
 [formatter.shfmt]
 command = "shfmt"
 options = ["-s", "-w"]
-includes = ["*.sh", ".gitignore", "justfile", ".env*"]
+includes = ["*.sh", ".gitignore", ".env*"]
 priority = 1
 
 [formatter.taplo]
 command = "taplo"
 excludes = []
-includes = ["*.toml", "rust-toolchain"]
+includes = ["*.toml", "rust-toolchain", "toolchain"]
 options = ["format"]
 
 [formatter.yamlfmt]
