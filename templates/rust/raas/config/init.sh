@@ -110,7 +110,8 @@ helpers_init() {
 		case "$(uname --all) | tr '[:lower:]' '[:upper:]" in
 		MING* | MSYS* | CYGWIN*)
 			# powershell.exe -Command "Set-ItemProperty -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer -Name EnableAutoTray -Value 0"
-			echo WINDOWS
+			powershell -Command "Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -Name AllowDevelopmentWithoutDevLicense"
+
 			;;
 		esac
 		# [ "$(uname -s)" = "Windows_NT" ] && powershell.exe -Command "Add-MpPreference -ExclusionPath \"$PWD\""
