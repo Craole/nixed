@@ -3,9 +3,9 @@
 
 #| Aliases
 [alias]
-rr = "run --release"
-rq = "run --quiet"
-wq = "watch --quiet --clear --exec rr"
+# rr = "run --release"
+# rq = "run --quiet"
+# wq = "watch --quiet --clear --exec rr"
 
 #| Terminal Config
 [term]

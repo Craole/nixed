@@ -105,15 +105,6 @@ helpers_init() {
 			head -n1
 	}
 
-	enable_windows_developer_mode() {
-		#? Enable developer mode for Windows
-		case "$(uname --all) | tr '[:lower:]' '[:upper:]" in
-		MING* | MSYS* | CYGWIN*)
-			# Enable developer mode for Windows
-		
-			;;
-		esac
-	}
 }
 
 project_info() {
@@ -147,6 +138,13 @@ project_info() {
 			JUST_UNSTABLE=true
 		}
 
+		#| Git Bash on Windows
+		case "$(uname --all) | tr '[:lower:]' '[:upper:]" in
+		*MSYS*)
+			MSYS=winsymlinks:nativestrict
+			export MSYS
+			;;
+		esac
 		set +o allexport
 
 		print_heading "Variables"
@@ -278,7 +276,10 @@ project_init() {
 		"$PRJ_CONF/cargo.toml" \
 		"$PRJ_ROOT/.cargo/config.toml" \
 		2>/dev/null ||
-		ln --symbolic --interactive --relative "$PRJ_CONF/cargo.toml" "$PRJ_ROOT/.cargo/config.toml"
+		ln \
+			"$PRJ_CONF/cargo.toml" \
+			"$PRJ_ROOT/.cargo/config.toml" \
+			--symbolic --interactive
 
 	# ln --symbolic --interactive --relative \
 	# 	"$PRJ_CONF/cargo.toml" \
@@ -308,11 +309,12 @@ project_git() {
 			print_status "Initializing new Git repository..."
 		}
 
-		# Link the .cargo
-		# 	mkdir --parents "$PRJ_ROOT/.cargo"
-		# 	ln --symbolic --interactive \
-		# 		"$PRJ_CONF/gitignore" \
-		# 		"$PRJ_ROOT/.gitignore"
+		Link the .cargo
+		mkdir --parents "$PRJ_ROOT/.cargo"
+		ln \
+			"$PRJ_CONF/gitignore" \
+			"$PRJ_ROOT/.gitignore" \
+			--symbolic --interactive
 	}
 
 	# Function to add changes to the staging area
