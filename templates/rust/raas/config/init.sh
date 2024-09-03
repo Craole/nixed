@@ -293,10 +293,10 @@ project_git() {
 		}
 
 		# Link the .cargo
-		mkdir --parents "$PRJ_ROOT/.cargo"
-		ln --symbolic --interactive \
-			"$PRJ_CONF/gitignore" \
-			"$PRJ_ROOT/.gitignore"
+		# 	mkdir --parents "$PRJ_ROOT/.cargo"
+		# 	ln --symbolic --interactive \
+		# 		"$PRJ_CONF/gitignore" \
+		# 		"$PRJ_ROOT/.gitignore"
 	}
 
 	# Function to add changes to the staging area
