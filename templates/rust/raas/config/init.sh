@@ -110,6 +110,8 @@ helpers_init() {
 		case "$(uname --all) | tr '[:lower:]' '[:upper:]" in
 		MING* | MSYS* | CYGWIN*)
 			# powershell.exe -Command "Set-ItemProperty -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer -Name EnableAutoTray -Value 0"
+			powershell -Command "Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force; & 'reg add \"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\" /t REG_DWORD /f /v \"AllowDevelopmentWithoutDevLicense\" /d \"1\"'"
+
 			powershell -Command "Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -Name AllowDevelopmentWithoutDevLicense"
 
 			;;
