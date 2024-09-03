@@ -104,6 +104,17 @@ helpers_init() {
 			-iname "$search_target" |
 			head -n1
 	}
+
+	enable_windows_developer_mode() {
+		#? Enable developer mode for Windows
+		case "$(uname --all) | tr '[:lower:]' '[:upper:]" in
+		MING* | MSYS* | CYGWIN*)
+			# powershell.exe -Command "Set-ItemProperty -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer -Name EnableAutoTray -Value 0"
+			echo WINDOWS
+			;;
+		esac
+		# [ "$(uname -s)" = "Windows_NT" ] && powershell.exe -Command "Add-MpPreference -ExclusionPath \"$PWD\""
+	}
 }
 
 project_info() {
