@@ -264,9 +264,15 @@ project_init() {
 
 	#| Link the cargo settings
 	mkdir --parents "$PRJ_ROOT/.cargo"
-	ln --symbolic --interactive --relative \
+	cmp --silent \
 		"$PRJ_CONF/cargo.toml" \
-		"$PRJ_ROOT/.cargo/config.toml"
+		"$PRJ_ROOT/.cargo/config.toml" \
+		2>/dev/null ||
+		ln --symbolic --interactive --relative "$PRJ_CONF/cargo.toml" "$PRJ_ROOT/.cargo/config.toml"
+
+	# ln --symbolic --interactive --relative \
+	# 	"$PRJ_CONF/cargo.toml" \
+	# 	"$PRJ_ROOT/.cargo/config.toml"
 
 	#| Update the repository
 	project_git "Initialized the project"
