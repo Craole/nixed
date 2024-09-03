@@ -142,9 +142,11 @@ project_info() {
 		case "$(uname --all) | tr '[:lower:]' '[:upper:]" in
 		*MSYS*)
 			MSYS=winsymlinks:nativestrict
-			export MSYS
+			echo "hitting msys"
 			;;
 		esac
+
+		# End of Variables
 		set +o allexport
 
 		print_heading "Variables"

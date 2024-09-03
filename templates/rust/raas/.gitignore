@@ -10,10 +10,10 @@
 #| Nix
 !.envrc
 result*
-# flake.lock
+flake.lock
 
 #| Rust
 !.cargo/
 target/
 debug/
-# Cargo.lock
+Cargo.lock
