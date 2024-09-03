@@ -172,17 +172,17 @@ project_info() {
 		app_available just && alias J='just'
 		alias K='exit'
 		if app_available eza; then
-			alias ls='eza --almost-all --group-directories-first --color=always --icons=always --git --git-ignore --time-style relative --total-size --smart-group'
-			alias L='ls --long '
-			alias La='ls --long --git'
+			alias LFS='eza --almost-all --group-directories-first --color=always --icons=always --git --git-ignore --time-style relative --total-size --smart-group'
+			alias L='LFS --long '
+			alias La='LFS --long --git'
 			alias Lt='L --tree'
 		elif app_available lsd; then
-			alias ls='lsd --almost-all --group-directories-first --color=always'
-			alias L='ls --long --git --date=relative --versionsort --total-size'
+			alias LFS='lsd --almost-all --group-directories-first --color=always'
+			alias L='LFS --long --git --date=relative --versionsort --total-size'
 			alias Lt='L --tree'
 		else
-			alias ls='ls --almost-all --group-directories-first --color=always'
-			alias L='ls -l'
+			alias LFS='ls --almost-all --group-directories-first --color=always'
+			alias L='LFS -l'
 			alias Lt='L --recursive'
 		fi
 		app_available pls && alias Lp='pls --det perm --det oct --det user --det group --det mtime --det git --det size --header false'
@@ -241,6 +241,9 @@ project_info() {
 
 project_init() {
 	print_heading "Project"
+
+	#@ Cargo
+	#| Ensure cargo is installed
 	app_available cargo || {
 		print_status \
 			--error "Initialization failed" \
@@ -251,19 +254,22 @@ project_init() {
 		tmp="$(mktemp)"
 		file="$PRJ_ROOT/Cargo.toml"
 		sed "s|^name = .*|name = \"$PRJ_NAME\"|" "$file" >"$tmp"
-		mv -- "$tmp" "$file"
+		mv --force "$tmp" "$file"
 	else
 		cargo init --name "$PRJ_NAME"
 	fi
 
-	[ -f "$PRJ_ROOT/.cargo/config.toml" ] || {
-		mkdir --parents "$PRJ_ROOT/.cargo"
-		ln --symbolic \
-			"$PRJ_CONF/cargo.toml" \
-			"$PRJ_ROOT/.cargo/config.toml"
-	}
-
+	#| Install dependencies
 	cargo build --release
+
+	#| Link the cargo settings
+	mkdir --parents "$PRJ_ROOT/.cargo"
+	ln --symbolic --interactive --relative \
+		"$PRJ_CONF/cargo.toml" \
+		"$PRJ_ROOT/.cargo/config.toml"
+
+	#| Update the repository
+	project_git "Initialized the project"
 }
 
 project_update() {
@@ -273,18 +279,24 @@ project_update() {
 }
 
 project_git() {
-	# Function to initialize a Git repository if not already initialized
+	app_available git || {
+		print_status \
+			--error "Initialization failed" \
+			--dependency "git"
+		return 127
+	}
+
 	init_repo() {
-		# if [ ! -d .git ]; then
-		# 	printf "Initializing new Git repository...\n"
-		# 	git init
-		# else
-		# 	printf "Git repository already initialized.\n"
-		# fi
 
 		[ ! -d .git ] && {
 			print_status "Initializing new Git repository..."
 		}
+
+		# Link the .cargo
+		mkdir --parents "$PRJ_ROOT/.cargo"
+		ln --symbolic --interactive \
+			"$PRJ_CONF/gitignore" \
+			"$PRJ_ROOT/.gitignore"
 	}
 
 	# Function to add changes to the staging area
@@ -319,23 +331,31 @@ project_git() {
 	# Main workflow
 	init_repo
 
-	# Check if a remote is configured
-	if [ "$(git remote get-url origin >/dev/null 2>&1)" ]; then
-		if [ "$(git status --porcelain >/dev/null 2>&1)" ]; then
-			printf "Local changes detected. Please commit or stash your changes before pulling.\n"
-			# TODO: List changes and give a prompt to continue
-			return 1
-		else
-			pull_changes
-		fi
+	update_repo() {
+		# Check if a remote is configured
+		if [ "$(git remote get-url origin >/dev/null 2>&1)" ]; then
+			if [ "$(git status --porcelain >/dev/null 2>&1)" ]; then
+				printf "Local changes detected. Please commit or stash your changes before pulling.\n"
+				# TODO: List changes and give a prompt to continue
+				return 1
+			else
+				pull_changes
+			fi
 
-		add_changes
-		commit_changes "$@"
-		push_changes
+			add_changes
+			commit_changes "$@"
+			push_changes
+		else
+			add_changes
+			commit_changes "$@"
+			printf "No remote repository configured. Skipping pull and push.\n"
+		fi
+	}
+
+	if app_available geet; then
+		geet "$@"
 	else
-		add_changes
-		commit_changes "$@"
-		printf "No remote repository configured. Skipping pull and push.\n"
+		update_repo "$@"
 	fi
 }
 
