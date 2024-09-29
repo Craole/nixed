@@ -104,15 +104,58 @@ helpers_init() {
 			-iname "$search_target" |
 			head -n1
 	}
+	slink() {
+		src="$1"
+		lnk="$2"
 
+		# Check if destination is a symlink and if it points to the correct source
+		if [ -L "$lnk" ]; then
+			if [ "$(readlink "$lnk")" = "$src" ]; then
+				echo "Symbolic link is already up to date."
+				return 0
+			fi
+		fi
+
+		# If destination is not a symlink, or it points to a different source
+		if [ -e "$lnk" ]; then
+			# Compare the contents of source and destination files
+			if cmp --silent "$src" "$lnk"; then
+				echo "Destination file is identical to the source file."
+				return 0
+			else
+				# Prompt user for action if contents are different
+				echo "Destination file exists and has different content."
+				read -p "Do you want to replace the destination with the source? (y/n): " choice
+				case "$choice" in
+				[Yy]*)
+					# Move the existing file to a backup location and create a symlink
+					mv "$lnk" "${lnk}.bak"
+					;;
+				[Nn]*)
+					echo "No changes made."
+					return 0
+					;;
+				*)
+					echo "Invalid choice. No changes made."
+					return 1
+					;;
+				esac
+			fi
+		fi
+
+		# Create symbolic link
+		ln --symbolic --force --quiet "$src" "$lnk"
+		echo "Symbolic link created from $src to $lnk."
+	}
 }
 
 project_info() {
 
 	variables() {
-		#@ Variables @#
-		#| Project Root Directory
+		#@ Start of Variables @#
 		set -o allexport
+
+		#| Project Root Directory
 		if pathof_flake_or_git >/dev/null 2>&1; then
 			PRJ_ROOT="$(pathof_flake_or_git)"
 		else
@@ -139,14 +182,13 @@ project_info() {
 		}
 
 		#| Git Bash on Windows
-		case "$(uname --all) | tr '[:lower:]' '[:upper:]" in
-		*MSYS*)
+		case "$(uname --all | tr '[:lower:]' '[:upper:]')" in
+		*MSYS* | *MINGW* | *CYGWIN*)
 			MSYS=winsymlinks:nativestrict
-			echo "hitting msys"
 			;;
 		esac
 
-		# End of Variables
+		#@ End of Variables
 		set +o allexport
 
 		print_heading "Variables"
@@ -274,10 +316,10 @@ project_init() {
 
 	#| Link the cargo settings
 	mkdir --parents "$PRJ_ROOT/.cargo"
-	cmp --silent \
+	cmp \
 		"$PRJ_CONF/cargo.toml" \
 		"$PRJ_ROOT/.cargo/config.toml" \
-		2>/dev/null ||
+		--silent ||
 		ln \
 			"$PRJ_CONF/cargo.toml" \
 			"$PRJ_ROOT/.cargo/config.toml" \
