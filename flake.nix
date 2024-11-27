@@ -17,9 +17,9 @@
     in
     {
       templates =
-        NixOS.templates //
-        The-Nix-Way.templates //
-        {
+        NixOS.templates
+        // The-Nix-Way.templates
+        // {
           # Rust
           rust = {
             description = "Rust Development Environment";
@@ -48,6 +48,10 @@
           rust-leptos = {
             description = "Rust Web Development [Leptos]";
             path = templatesPath + "/rust/leptos";
+          };
+          rust-loco = {
+            description = "Rust Web Development [LocoRS]";
+            path = templatesPath + "/rust/loco";
           };
 
           # Ruby
