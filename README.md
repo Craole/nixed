@@ -32,10 +32,10 @@ nix flake new --template github:Craole/nixed#${ENV} ${NEW_PRJ_DIR}
 Here's an example for the Rust template ([`dev-rust`](./export/dev/rust))
 
 ```shell
-# Current Poject
+#| Current Poject
 nix flake init --template github:Craole/nixed#dev-rust
 
-# New Project
+#| New Project
 nix flake new --template github:Craole/nixed#dev-rust ${NEW_PRJ_DIR}
 ```
 
